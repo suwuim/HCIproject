@@ -10,7 +10,7 @@ class SignupPage extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/img.png'),
+              image: AssetImage('assets/images/cloud.png'),
               fit: BoxFit.cover,
             ),
           ),
