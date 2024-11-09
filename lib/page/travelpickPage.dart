@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/components/home_travelpickWidget.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/personalpickPage.dart';
 
 class TravelerPickPage extends StatelessWidget {
   const TravelerPickPage();
@@ -207,71 +208,81 @@ class TravelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 368,  // 너비를 적절히 설정
-      height: 234, // 높이도 적절히 설정
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 5,
-            offset: Offset(0, 3),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PersonalPickPage(),
           ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // 배경 이미지
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.asset(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
+        );
+      },
+      child: Container(
+        width: 368,  // 너비를 적절히 설정
+        height: 234, // 높이도 적절히 설정
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 5,
+              offset: Offset(0, 3),
             ),
-          ),
-
-          Positioned(
-            top: 10, left: 10,
-            child: Image.asset(
-              'assets/images/전체픽데코선.png',
-              width: 350,
-            ),
-          ),
-
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 110),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,  // 수직 중앙 정렬
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    country,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(date, style: TextStyle(fontSize: 16, color: Colors.white,),),
-                      SizedBox(width: 6,),
-                      Text("ㅣ", style: TextStyle(fontSize: 16, color: Colors.white,)),
-                      SizedBox(width: 6,),
-                      Text(duration, style: TextStyle(fontSize: 16, color: Colors.white,),),
-                    ],
-                  ),
-                ],
+          ],
+        ),
+        child: Stack(
+          children: [
+            // 배경 이미지
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.asset(
+                imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
               ),
             ),
-          ),
-        ],
+      
+            Positioned(
+              top: 10, left: 10,
+              child: Image.asset(
+                'assets/images/전체픽데코선.png',
+                width: 350,
+              ),
+            ),
+      
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 110),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,  // 수직 중앙 정렬
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      country,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(date, style: TextStyle(fontSize: 16, color: Colors.white,),),
+                        SizedBox(width: 6,),
+                        Text("ㅣ", style: TextStyle(fontSize: 16, color: Colors.white,)),
+                        SizedBox(width: 6,),
+                        Text(duration, style: TextStyle(fontSize: 16, color: Colors.white,),),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

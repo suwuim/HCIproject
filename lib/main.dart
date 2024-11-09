@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/page/home.dart';
+import 'package:travelmate/page/personalpickPage.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
 void main() {
