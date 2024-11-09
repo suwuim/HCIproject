@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/components/home_travelpickWidget.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/travelpickPage.dart';
 
 class PersonalPickPage extends StatelessWidget {
   String profile = "assets/images/캐릭터.png";
@@ -16,9 +17,9 @@ class PersonalPickPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: NavigationMenu(),
       body: Column(
         children: [
-          NavigationMenu(),
           Expanded(
             child: Row(
               children: [
@@ -121,7 +122,14 @@ class PersonalPickPage extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => TravelerPickPage(),
+                                          ),
+                                        );
+                                      },
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: Colors.white,
                                         backgroundColor: AppColors.DarkBlue,
