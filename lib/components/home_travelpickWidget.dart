@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/travelpickPage.dart';
 
 
 
@@ -41,7 +42,25 @@ class _TravelPickSectionState extends State<TravelPickSection> {
                 children: [
                   Text('트레블러 PICK!', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold,),),
                   SizedBox(width: 17),
-                  Container(padding: EdgeInsets.only(top: 14), decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFF4C5767), width: 1))), child: Text("더 둘러보기 +", style: TextStyle(color: Color(0xFF4C5767),fontSize: 12 ),))
+                  Container(
+                    padding: EdgeInsets.only(top: 14),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Color(0xFF4C5767), width: 1)),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        // "더 둘러보기 +" 텍스트를 클릭했을 때 TravelerPickPage로 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TravelerPickPage()),
+                        );
+                      },
+                      child: Text(
+                        "더 둘러보기 +",
+                        style: TextStyle(color: Color(0xFF4C5767), fontSize: 12),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 10),
