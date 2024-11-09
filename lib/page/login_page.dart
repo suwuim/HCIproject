@@ -25,7 +25,7 @@ class LoginPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Header
-                Image.asset('assets/login_image.png', height: 100),
+                Image.asset('assets/cloud.png', height: 100),
                 Text(
                   'Travel Mate',
                   style: TextStyle(
