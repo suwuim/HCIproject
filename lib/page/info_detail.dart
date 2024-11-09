@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/info.dart';
 
 class DetailInputScreen extends StatefulWidget {
   @override
@@ -148,7 +149,10 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SelectInputScreen()),
+                  );},
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.white, minimumSize: Size(120, 50)),
                   child: Text('Previous', style: TextStyle(fontSize: 18, color: AppColors.GreyBlue)),
                 ),
