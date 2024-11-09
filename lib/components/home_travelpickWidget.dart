@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/personalpickPage.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
 
@@ -146,66 +147,76 @@ class _TravelPickCardState extends State<TravelPickCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 370,
-      width: 240,
-      margin: EdgeInsets.only(right: 25),
-      child: Card(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PersonalPickPage(),
+          ),
+        );
+      },
+      child: Container(
+        height: 370,
+        width: 240,
+        margin: EdgeInsets.only(right: 25),
+        child: Card(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      child: Image.asset(widget.img, fit: BoxFit.cover,),
+                    ),
                   ),
-                  child: Container(
-                    height: 200,
-                    width: double.infinity,
-                    child: Image.asset(widget.img, fit: BoxFit.cover,),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 8,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : Colors.white,
+                  Positioned(
+                    top: 0,
+                    right: 8,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.red : Colors.white,
+                          ),
+                          onPressed: _toggleLike,
                         ),
-                        onPressed: _toggleLike,
-                      ),
-                      Text(
-                        '$likeCount',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          '$likeCount',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 15,),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(widget.title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900,)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(widget.hashtag, style: TextStyle(fontSize: 12, color: Color(0xFF68BADB))),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-              child: Text(widget.description, maxLines: 5, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
-            ),
-          ],
+                ],
+              ),
+              SizedBox(height: 15,),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(widget.title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900,)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(widget.hashtag, style: TextStyle(fontSize: 12, color: Color(0xFF68BADB))),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                child: Text(widget.description, maxLines: 5, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+              ),
+            ],
+          ),
         ),
       ),
     );
