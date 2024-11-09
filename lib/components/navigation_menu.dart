@@ -3,7 +3,7 @@ import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
-class NavigationMenu extends StatelessWidget {
+class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
   const NavigationMenu();
 
   Widget Menu(String name, GestureTapCallback onTap) {
@@ -78,4 +78,7 @@ class NavigationMenu extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(70.0);
 }
