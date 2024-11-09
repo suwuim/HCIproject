@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/components/home_travelpickWidget.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/chatbotPage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage();
@@ -71,7 +72,12 @@ class HomePage extends StatelessWidget {
                                     backgroundColor: Colors.white,
                                     minimumSize: Size(180, 60),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ChatbotPage()),
+                                    );
+                                  },
                                   child: Text('나의 여행지', style: TextStyle(fontSize: 20),),
                                 ),
                               ],

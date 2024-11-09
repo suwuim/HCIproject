@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
@@ -51,7 +52,12 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                 );
               }),
               Menu('여행만들기', () { }),
-              Menu('나의여행지', () { }),
+              Menu('나의여행지', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatbotPage()),
+                );
+              }),
               Menu('여행탐방', () { }),
               Menu('세계탐방', () { }),
               Menu('여행PICK', () {
