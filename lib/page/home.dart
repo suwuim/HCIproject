@@ -124,9 +124,9 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-              
-              
-              
+
+
+
               // 최근 인기 여행지 섹션
               Padding(
                 padding: EdgeInsets.all(16),
@@ -174,11 +174,11 @@ class HomePage extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildTravelPickCard('오스트리아 잘츠부르크', '잘츠부르크는 아름다운 도시입니다.'),
-                          _buildTravelPickCard('스페인 바르셀로나', '바르셀로나는 유명한 관광지입니다.'),
-                          _buildTravelPickCard('대만 가오슝', '대만의 인기 있는 여행지입니다.'),
-                          _buildTravelPickCard('미국 샌프란시스코', '골든게이트 다리로 유명합니다.'),
-                          _buildTravelPickCard('홍콩 혼합배경', '홍콩의 다양한 문화를 경험해보세요.'),
+                          _buildTravelPickCard(' ', '오스트리아 잘츠부르크', '잘츠부르크는 아름다운 도시입니다.'),
+                          _buildTravelPickCard(' ', '스페인 바르셀로나', '바르셀로나는 유명한 관광지입니다.'),
+                          _buildTravelPickCard(' ', '대만 가오슝', '대만의 인기 있는 여행지입니다.'),
+                          _buildTravelPickCard(' ', '미국 샌프란시스코', '골든게이트 다리로 유명합니다.'),
+                          _buildTravelPickCard(' ', '홍콩 혼합배경', '홍콩의 다양한 문화를 경험해보세요.'),
                         ],
                       ),
                     ),
