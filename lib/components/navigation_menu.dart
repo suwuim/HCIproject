@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/home.dart';
+import 'package:travelmate/page/travelpickPage.dart';
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu();
@@ -28,18 +30,36 @@ class NavigationMenu extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-            child: Image.asset('assets/images/logo.png', width: 200),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+              child: Image.asset('assets/images/logo.png', width: 200),
+            ),
           ),
           Row(
             children: [
-              Menu('홈', () { }),
+              Menu('홈', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+              }),
               Menu('여행만들기', () { }),
               Menu('나의여행지', () { }),
               Menu('여행탐방', () { }),
               Menu('세계탐방', () { }),
-              Menu('여행PICK', () { }),
+              Menu('여행PICK', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TravelerPickPage()),
+                );
+              }),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: OutlinedButton(
