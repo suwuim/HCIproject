@@ -11,9 +11,11 @@ class _ChatDrawerState extends State<ChatDrawer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 35, vertical: 40),
+      padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20),
       color: Colors.white,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset("assets/images/드로어로고.png"),
           SizedBox(height: 40,),
@@ -93,6 +95,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
               ],
             ),
           ),
+          SizedBox(height: 20,)
         ],
       ),
 
