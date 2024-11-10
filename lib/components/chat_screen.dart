@@ -56,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 30.0),
                           child: CircleAvatar(
-                            backgroundImage: AssetImage('assets/images/파리.png'),
+                            backgroundImage: AssetImage('assets/images/챗봇프사.png'),
                             radius: 20,
                           ),
                         ),
@@ -201,16 +201,23 @@ class RecommendQuestionBox extends StatefulWidget {
 class _RecommendQuestionBoxState extends State<RecommendQuestionBox> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      margin: EdgeInsets.only(right: 10, bottom: 10),
-      decoration: BoxDecoration(
-        color: Color(0xFFC9DDED),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Text(
-        widget.question,
-        style: TextStyle(color: Colors.black, fontSize: 13,),
+    return InkWell(
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      onTap: (){
+
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        margin: EdgeInsets.only(right: 10, bottom: 10),
+        decoration: BoxDecoration(
+          color: Color(0xFFC9DDED),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Text(
+          widget.question,
+          style: TextStyle(color: Colors.black, fontSize: 13,),
+        ),
       ),
     );
   }
