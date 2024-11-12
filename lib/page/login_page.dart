@@ -4,118 +4,189 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            width: 400,
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Top half with background image
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.5, // Adjusted height
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/cloud.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end, // Align elements at the bottom
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0), // Adjust padding to move it lower
+                    child: Column(
+                      children: [
+                        Text(
+                          'Travel Mate',
+                          style: TextStyle(
+                            fontFamily: 'MuseoModerno',
+                            fontSize: 40,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          '나를 위한 여행 플래너, 트래블메이트',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 15,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Separator line with diamonds
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Left line
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        // Left set of outlined diamonds
+                        Row(
+                          children: List.generate(3, (index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Transform.rotate(
+                                angle: 0.785398, // 45 degrees in radians
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black54, width: 1),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(width: 10),
+                        // "Login" text
+                        Text(
+                          'Login',
+                          style: TextStyle(
+                            fontFamily: 'Krub',
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        // Right set of outlined diamonds
+                        Row(
+                          children: List.generate(3, (index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              child: Transform.rotate(
+                                angle: 0.785398, // 45 degrees in radians
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black54, width: 1),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(width: 8),
+                        // Right line
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Bottom half with form
+            Container(
+              width: double.infinity,
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 10,
-                  offset: Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Image.asset('assets/cloud.png', height: 100),
-                Text(
-                  'Travel Mate',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+              padding: EdgeInsets.symmetric(vertical: 80),
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width > 500
+                      ? 400
+                      : MediaQuery.of(context).size.width * 0.85,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '나를 위한 여행 플래너, 트래블메이트',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Login Text
-                Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                Divider(
-                  thickness: 1,
-                  color: Colors.grey[300],
-                  indent: 40,
-                  endIndent: 40,
-                ),
-                SizedBox(height: 20),
-
-                // ID Field
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: '아이디',
-                    hintText: '아이디를 입력하세요.',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Password Field
-                TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: '비밀번호',
-                    hintText: '비밀번호를 입력하세요.',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Login Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle login action here
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF689ADB),
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                          labelText: '아이디',
+                          hintText: '아이디를 입력하세요.',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      '로그인',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
+                      SizedBox(height: 20),
+                      TextField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: '비밀번호',
+                          hintText: '비밀번호를 입력하세요.',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(height: 30),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Add your signup logic here
+                          },
+                          child: Text(
+                            '로그인',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            backgroundColor: Color(0xFF689ADB),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
