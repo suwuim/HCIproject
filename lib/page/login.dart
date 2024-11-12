@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/page/home.dart';
+import 'login_page.dart';
+import 'signup_page.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 
@@ -49,7 +52,7 @@ class Login extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: 10), 
+                      SizedBox(height: 10),
 
                       SizedBox(
                         height: 110,
@@ -66,7 +69,13 @@ class Login extends StatelessWidget {
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: (){
+                          // Navigate to the LoginPage when the button is pressed
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        },
                         child: Text(
                           '바로 시작하기',
                           style: TextStyle(
@@ -115,7 +124,13 @@ class Login extends StatelessWidget {
                       ),
                       // Login Button
                       OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // Navigate to the LoginPage when the button is pressed
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
+                        },
                         child: Text(
                           '로그인',
                           style: TextStyle(
@@ -134,7 +149,13 @@ class Login extends StatelessWidget {
                       SizedBox(height: 10),
                       // Sign-up Button with the same properties as Login
                       OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // Navigate to the LoginPage when the button is pressed
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignupPage()),
+                          );
+                        },
                         child: Text(
                           '회원가입',
                           style: TextStyle(
