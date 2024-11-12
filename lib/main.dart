@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/info.dart';
+import 'package:travelmate/page/login.dart';
 
 
 void main() {
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: Login(),
     );
   }
 }
