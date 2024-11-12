@@ -11,7 +11,7 @@ class Login extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(0.0), // No padding around the layout
+          padding: const EdgeInsets.all(0.0),
           child: Row(
             children: [
               // Left side with the image
@@ -21,7 +21,6 @@ class Login extends StatelessWidget {
                   child: Image.asset('assets/images/travel.png', height: 1080),
                 ),
               ),
-              // Right side with text and buttons
               Expanded(
                 flex: 1,
                 child: Padding(
@@ -70,7 +69,6 @@ class Login extends StatelessWidget {
                       SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: (){
-                          // Navigate to the LoginPage when the button is pressed
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => HomePage()),
@@ -85,8 +83,8 @@ class Login extends StatelessWidget {
                         ),
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
-                          minimumSize: Size(440, 75), // Button size: 440x75
-                          backgroundColor: Color(0xFF689ADB), // Background color
+                          minimumSize: Size(440, 75),
+                          backgroundColor: Color(0xFF689ADB),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -97,14 +95,12 @@ class Login extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Left line with fixed width
                             Container(
                               width: 180,
                               child: Divider(
                                 thickness: 1,
                               ),
                             ),
-                            // The 'or' text
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
@@ -112,7 +108,6 @@ class Login extends StatelessWidget {
                                 style: TextStyle(fontSize: 16, color: Colors.black),
                               ),
                             ),
-                            // Right line with fixed width
                             Container(
                               width: 180,
                               child: Divider(
@@ -125,7 +120,6 @@ class Login extends StatelessWidget {
                       // Login Button
                       OutlinedButton(
                         onPressed: () {
-                          // Navigate to the LoginPage when the button is pressed
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => LoginPage()),
@@ -147,10 +141,8 @@ class Login extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10),
-                      // Sign-up Button with the same properties as Login
                       OutlinedButton(
                         onPressed: () {
-                          // Navigate to the LoginPage when the button is pressed
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => SignupPage()),
