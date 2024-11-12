@@ -3,6 +3,7 @@ import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/info.dart';
+import 'package:travelmate/page/login.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
 class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
@@ -75,7 +76,12 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()),
+                    );
+                  },
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
                     foregroundColor: AppColors.mainBlue, // 글자 색상
