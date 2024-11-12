@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/components/home_travelpickWidget.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/chatbotPage.dart';
+import 'package:travelmate/page/info.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage();
 
-  Widget _header() {
-    return Placeholder(fallbackHeight: 70,);
-  }
-
-  Widget _contents() {
-    return Placeholder();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: NavigationMenu(),
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
@@ -27,7 +23,6 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              NavigationMenu(),
               SizedBox(height: 100),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 250, vertical: 20),
@@ -62,7 +57,12 @@ class HomePage extends StatelessWidget {
                             Row(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => SelectInputScreen()),
+                                    );
+                                  },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
                                     foregroundColor: AppColors.mainBlue, // 글자 색상
@@ -119,72 +119,41 @@ class HomePage extends StatelessWidget {
                         Image.asset('assets/images/메인세계탐험.png', width: 600,)
                       ],
                     ),
-                    Container(child: Image.asset('assets/images/메인랭킹박스.png', width: 400,))
+
+
+
+                    Container(
+                      width: 400,
+                      child: Stack(
+                        children: [
+                          Image.asset('assets/images/메인랭킹박스.png', width: 400, fit: BoxFit.cover,),
+
+                          Positioned(
+                            top: 60, left: 90,
+                            child: Text(
+                              '= 최근 인기 여행지 =',
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF0E2A4E),),
+                            ),
+                          ),
+
+                          _rankingBox(1, "assets/images/오사카.png", "오사카", "일본"),
+                          _rankingBox(2, "assets/images/파리.png", "파리", "프랑스", arrow: "▲", change: 5),
+                          _rankingBox(3, "assets/images/발리.png", "발리", "인도네시아",),
+                          _rankingBox(4, "assets/images/바르셀로.png", "바르셀로나", "스페인", arrow: "▼", change: 2),
+                          _rankingBox(5, "assets/images/뉴욕.png", "뉴욕", "미국", arrow: "▲", change: 1),
+
+                        ],
+                      )
+                    )
                   ],
                 ),
               ),
-
-
-
-
-              // 최근 인기 여행지 섹션
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '= 최근 인기 여행지 =',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    _buildPopularDestinations(),
-                  ],
-                ),
-              ),
-
+              SizedBox(height: 150,),
 
 
               // 트레블러 PICK! 섹션
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 250, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '트레블러 PICK!',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'TravelMate가 추천해준 여행 일정에 다녀온 트래블러들의 추천이에요. 다른 사용자들의 여행 일정과 후기를 둘러보세요.',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.GreyBlue
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildTravelPickCard(' ', '오스트리아 잘츠부르크', '잘츠부르크는 아름다운 도시입니다.'),
-                          _buildTravelPickCard(' ', '스페인 바르셀로나', '바르셀로나는 유명한 관광지입니다.'),
-                          _buildTravelPickCard(' ', '대만 가오슝', '대만의 인기 있는 여행지입니다.'),
-                          _buildTravelPickCard(' ', '미국 샌프란시스코', '골든게이트 다리로 유명합니다.'),
-                          _buildTravelPickCard(' ', '홍콩 혼합배경', '홍콩의 다양한 문화를 경험해보세요.'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              TravelPickSection(),
+              SizedBox(height: 200,)
             ],
           ),
         ),
@@ -192,67 +161,89 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildPopularDestinations() {
-    return Column(
-      children: [
-        ListTile(
-          title: Text('오사카'),
-          subtitle: Text('일본'),
-          trailing: Icon(Icons.arrow_forward),
-        ),
-        ListTile(
-          title: Text('파리'),
-          subtitle: Text('프랑스'),
-          trailing: Icon(Icons.arrow_forward),
-        ),
-        ListTile(
-          title: Text('발리'),
-          subtitle: Text('인도네시아'),
-          trailing: Icon(Icons.arrow_forward),
-        ),
-        ListTile(
-          title: Text('바르셀로나'),
-          subtitle: Text('스페인'),
-          trailing: Icon(Icons.arrow_forward),
-        ),
-        ListTile(
-          title: Text('뉴욕'),
-          subtitle: Text('미국'),
-          trailing: Icon(Icons.arrow_forward),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildTravelPickCard(String img,String title, String description) {
-    return Container(
-      width: 200,
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _rankingBox(int rank, String image, String city, String country, {String? arrow, int? change}) {
+    Color arrowColor = Colors.grey.shade800;
+    if (arrow == "▲") {
+      arrowColor = Colors.red;
+    } else if (arrow == "▼") {
+      arrowColor = Colors.blue;
+    }
+
+    return Positioned(
+      top: 120.0 + (rank - 1) * 80.0, // 위치를 랭크에 따라 조정
+      left: 35.0,
+      right: 50.0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFE9EEEF).withOpacity(0.7),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
           children: [
-            Image.network(
-              'https://via.placeholder.com/200x150',
-              fit: BoxFit.cover,
+            Text(
+              "$rank",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+            SizedBox(width: 20),
+            ClipOval(
+              child: Image.asset(
+                image,
+                width: 45,
+                height: 45,
+                fit: BoxFit.cover,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(description),
+            SizedBox(width: 10),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        city,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        country,
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  if (arrow != null && change != null)
+                    Row(
+                      children: [
+                        Text(
+                          arrow,
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: arrowColor),
+                        ),
+                        SizedBox(width: 2,),
+                        Text("$change", style: TextStyle(color: arrowColor, fontSize: 12),)
+                      ],
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Text(
+                        "-",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: arrowColor),
+                      ),
+                    ),
+                ],
+              ),
             ),
+
           ],
         ),
       ),
     );
   }
 }
+
+
+
+
+
