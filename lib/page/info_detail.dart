@@ -23,10 +23,7 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
-        child: NavigationMenu(),
-      ),
+      appBar: NavigationMenu(),
       body: Stack(
         children: [
           _buildBackgroundImage(),

@@ -4,6 +4,7 @@ import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/login.dart';
+import 'package:travelmate/page/map.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
 class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
@@ -65,8 +66,13 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                   MaterialPageRoute(builder: (context) => ChatbotPage()),
                 );
               }),
-              Menu('여행탐방', () { }),
-              Menu('세계탐방', () { }),
+              Menu('여행랭킹', () { }),
+              Menu('세계탐방', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MapPage()),
+                );
+              }),
               Menu('여행PICK', () {
                 Navigator.push(
                   context,

@@ -4,6 +4,7 @@ import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
+import 'package:travelmate/page/map.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage();
@@ -92,60 +93,68 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 150,),
 
               // 세계 탐험하기 섹션
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 250, vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '세계를 탐험해보세요',
-                          style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          '아직 여행지가 정해지지 않았나요? 다양한 추천 여행지를 탐험하고 당신의 다음 모험을 설계해보세요!',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.GreyBlue
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Image.asset('assets/images/메인세계탐험.png', width: 600,)
-                      ],
-                    ),
-
-
-
-                    Container(
-                      width: 400,
-                      child: Stack(
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MapPage()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 250, vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.asset('assets/images/메인랭킹박스.png', width: 400, fit: BoxFit.cover,),
-
-                          Positioned(
-                            top: 60, left: 90,
-                            child: Text(
-                              '= 최근 인기 여행지 =',
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF0E2A4E),),
+                          Text(
+                            '세계를 탐험해보세요',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-
-                          _rankingBox(1, "assets/images/오사카.png", "오사카", "일본"),
-                          _rankingBox(2, "assets/images/파리.png", "파리", "프랑스", arrow: "▲", change: 5),
-                          _rankingBox(3, "assets/images/발리.png", "발리", "인도네시아",),
-                          _rankingBox(4, "assets/images/바르셀로.png", "바르셀로나", "스페인", arrow: "▼", change: 2),
-                          _rankingBox(5, "assets/images/뉴욕.png", "뉴욕", "미국", arrow: "▲", change: 1),
-
+                          SizedBox(height: 10),
+                          Text(
+                            '아직 여행지가 정해지지 않았나요? 다양한 추천 여행지를 탐험하고 당신의 다음 모험을 설계해보세요!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.GreyBlue
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Image.asset('assets/images/메인세계탐험.png', width: 600,)
                         ],
+                      ),
+
+
+
+                      Container(
+                        width: 400,
+                        child: Stack(
+                          children: [
+                            Image.asset('assets/images/메인랭킹박스.png', width: 400, fit: BoxFit.cover,),
+
+                            Positioned(
+                              top: 60, left: 90,
+                              child: Text(
+                                '= 최근 인기 여행지 =',
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF0E2A4E),),
+                              ),
+                            ),
+
+                            _rankingBox(1, "assets/images/오사카.png", "오사카", "일본"),
+                            _rankingBox(2, "assets/images/파리.png", "파리", "프랑스", arrow: "▲", change: 5),
+                            _rankingBox(3, "assets/images/발리.png", "발리", "인도네시아",),
+                            _rankingBox(4, "assets/images/바르셀로.png", "바르셀로나", "스페인", arrow: "▼", change: 2),
+                            _rankingBox(5, "assets/images/뉴욕.png", "뉴욕", "미국", arrow: "▲", change: 1),
+
+                          ],
+                        )
                       )
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 150,),
