@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/home.dart';
+import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
 class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
@@ -51,7 +52,12 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                   MaterialPageRoute(builder: (context) => HomePage()),
                 );
               }),
-              Menu('여행만들기', () { }),
+              Menu('여행만들기', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SelectInputScreen()),
+                );
+              }),
               Menu('나의여행지', () {
                 Navigator.push(
                   context,

@@ -3,6 +3,7 @@ import 'package:travelmate/components/home_travelpickWidget.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
+import 'package:travelmate/page/info.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage();
@@ -22,6 +23,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 100),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 250, vertical: 20),
                 child: Row(
@@ -55,30 +57,26 @@ class HomePage extends StatelessWidget {
                             Row(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => SelectInputScreen()),
+                                    );
+                                  },
                                   style: OutlinedButton.styleFrom(
-                                    side: BorderSide(color: AppColors.mainBlue, width: 2,),
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: AppColors.mainBlue,
-                                    minimumSize: Size(180, 60),
+                                    side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
+                                    foregroundColor: AppColors.mainBlue, // 글자 색상
                                   ),
-                                  child: Text('여행 만들기', style: TextStyle(fontSize: 20),),
+                                  child: Text('여행 만들기'),
                                 ),
                                 SizedBox(width: 10),
                                 OutlinedButton(
                                   style: OutlinedButton.styleFrom(
-                                    side: BorderSide(color: AppColors.mainBlue, width: 2),
-                                    foregroundColor: AppColors.mainBlue,
-                                    backgroundColor: Colors.white,
-                                    minimumSize: Size(180, 60),
+                                    side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
+                                    foregroundColor: AppColors.mainBlue, // 글자 색상
                                   ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => ChatbotPage()),
-                                    );
-                                  },
-                                  child: Text('나의 여행지', style: TextStyle(fontSize: 20),),
+                                  onPressed: () {},
+                                  child: Text('나의 여행지'),
                                 ),
                               ],
                             ),
