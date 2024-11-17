@@ -8,7 +8,6 @@ import 'package:travelmate/page/map.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 
 class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
-  const NavigationMenu();
 
   Widget Menu(String name, GestureTapCallback onTap) {
     return InkWell(
@@ -38,7 +37,9 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
               );
             },
             child: Padding(
@@ -51,7 +52,9 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
               Menu('홈', () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
                 );
               }),
               Menu('여행만들기', () {
@@ -66,7 +69,7 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                   MaterialPageRoute(builder: (context) => ChatbotPage()),
                 );
               }),
-              Menu('여행랭킹', () { }),
+              Menu('여행랭킹', () {}),
               Menu('세계탐방', () {
                 Navigator.push(
                   context,
