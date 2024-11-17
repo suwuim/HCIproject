@@ -31,14 +31,11 @@ class Login extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Travel Mate',
-                      style: TextStyle(
-                        fontSize: 55,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'MuseoModerno',
-                        color: Colors.black,
-                      ),
+                    Image.asset(
+                      'assets/images/travel_mate.png',
+                      height: 50,
+                      width: 200,
+                      fit: BoxFit.contain,
                     ),
                     SizedBox(
                       height: 32,
@@ -53,7 +50,7 @@ class Login extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height:3),
+                    SizedBox(height: 3),
                     SizedBox(
                       height: 120,
                       width: 426,
@@ -61,7 +58,7 @@ class Login extends StatelessWidget {
                         '단 하나 뿐인 당신의 여행을 만들어드립니다.\n당신의 모든 요구를 만족시키는 맞춤 설계 여행,\n이제 간편하게 시작하세요.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize:16 ,
+                          fontSize: 16,
                           color: Colors.black,
                           fontFamily: 'Montserrat',
                         ),

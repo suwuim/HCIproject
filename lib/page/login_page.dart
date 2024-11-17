@@ -25,14 +25,12 @@ class LoginPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 50.0),
                       child: Column(
                         children: [
-                          Text(
-                            'Travel Mate',
-                            style: TextStyle(
-                              fontFamily: 'MuseoModerno',
-                              fontSize: 40,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
+                          // Replace text with image
+                          Image.asset(
+                            'assets/images/travel_mate.png',
+                            width: 180,
+                            height: 60,
+                            fit: BoxFit.contain,
                           ),
                           SizedBox(height: 3),
                           Text(
@@ -49,9 +47,8 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
               ),
-              // Bottom half with form
               Expanded(
-                child: SingleChildScrollView( // Added scroll view here
+                child: SingleChildScrollView(
                   child: Container(
                     width: double.infinity,
                     color: Colors.white,
