@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 
 class MapPage extends StatefulWidget {
@@ -11,42 +13,53 @@ class MapPage extends StatefulWidget {
 class _MapState extends State<MapPage> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = '풍경';
-  final Map<String, List<String>> _imagesByCategory = {
-    '풍경': [
-      'assets/images/바르셀로나/풍경1.png',
-      'assets/images/바르셀로나/풍경2.png',
-      'assets/images/바르셀로나/풍경3.png',
-      'assets/images/바르셀로나/풍경4.jpg',
-      'assets/images/바르셀로나/풍경5.jpg',
-      'assets/images/바르셀로나/풍경6.jpg',
-      'assets/images/바르셀로나/풍경7.jpg',
-      'assets/images/바르셀로나/풍경8.jpg',
-    ],
-    '건축물': [
-      'assets/images/바르셀로나/건축물1.png',
-      'assets/images/바르셀로나/건축물2.png',
-      'assets/images/바르셀로나/건축물3.png',
-      'assets/images/바르셀로나/건축물4.jpg',
-      'assets/images/바르셀로나/건축물5.jpg',
-      'assets/images/바르셀로나/건축물6.jpg',
-      'assets/images/바르셀로나/건축물7.jpg',
-      'assets/images/바르셀로나/건축물8.jpg',
-    ],
-    '액티비티': [
-      'assets/images/바르셀로나/액티비티1.png',
-      'assets/images/바르셀로나/액티비티2.png',
-      'assets/images/바르셀로나/액티비티3.png',
-      'assets/images/바르셀로나/액티비티4.jpg',
-      'assets/images/바르셀로나/액티비티5.jpg',
-      'assets/images/바르셀로나/액티비티6.jpg',
-      'assets/images/바르셀로나/액티비티7.jpg',
-      'assets/images/바르셀로나/액티비티8.jpg',
+  String _selectedRegion = '아시아'; // 기본값
+  List<String> _currentImages = []; // 현재 표시할 이미지 리스트
 
-    ],
-  };
+  @override
+  void initState() {
+    super.initState();
+    _loadImages(_selectedRegion, _selectedCategory); // 초기 로드
+  }
 
-  List<String> get _currentImages => _imagesByCategory[_selectedCategory] ?? [];
+  // 이미지 로드 함수
+  Future<void> _loadImages(String region, String category) async {
+    final folderPath = 'assets/images/map_image/$region/$category';
+    try {
+      // AssetManifest.json에서 파일 경로를 동적으로 가져옴
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
+      final images = manifestMap.keys
+          .where((path) => path.startsWith(folderPath) && (path.endsWith('.png') || path.endsWith('.jpg')))
+          .toList();
+
+      setState(() {
+        _currentImages = images; // 이미지 경로 업데이트
+      });
+    } catch (e) {
+      debugPrint('Error loading images from $folderPath: $e');
+      setState(() {
+        _currentImages = [];
+      });
+    }
+  }
+
+  // 지역 선택
+  void _selectRegion(String region) {
+    setState(() {
+      _selectedRegion = region;
+    });
+    _loadImages(region, _selectedCategory);
+  }
+
+  // 카테고리 선택
+  void _selectCategory(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+    _loadImages(_selectedRegion, category);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,16 +134,68 @@ class _MapState extends State<MapPage> {
                         // Right side: map image container
                         Expanded(
                           flex: 2,
-                          child: Container(
-                            height: 300,
-                            margin: EdgeInsetsDirectional.fromSTEB(120, 32, 0, 0), //start, top, end, bottom
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/map.png'),
-                                fit: BoxFit.contain,
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 300,
+                                    margin: const EdgeInsetsDirectional.fromSTEB(120, 32, 0, 0), // start, top, end, bottom
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage('assets/images/map.png'),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 130,
+                                    left: 480,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _selectedRegion == '아시아' ? Colors.black26 : Colors.transparent, // 선택된 경우 배경 파란색
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                        onPressed: () => _selectRegion('아시아'),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 100,
+                                    left: 350,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _selectedRegion == '유럽' ? Colors.black26 : Colors.transparent, // 선택된 경우 배경 파란색
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                        onPressed: () => _selectRegion('유럽'),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 120,
+                                    right: 300,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _selectedRegion == '북아메리카' ? Colors.black26 : Colors.transparent, // 선택된 경우 배경 파란색
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                        onPressed: () => _selectRegion('북아메리카'),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+
+                            ],
                           ),
+
                         ),
                       ],
                     ),
@@ -145,24 +210,21 @@ class _MapState extends State<MapPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: ['풍경', '건축물', '액티비티'].map((category) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: SizedBox(
-                      width: 200,
-                      child: ChoiceChip(
-                        label: Text(
-                          category,
-                          style: const TextStyle(fontSize: 15),
-                        ),
-                        selected: _selectedCategory == category,
-                        onSelected: (isSelected) {
-                          setState(() {
-                            _selectedCategory = category;
-                          });
-                        },
-                        labelPadding: const EdgeInsets.symmetric(horizontal: 0),
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12,),
+                  return ChoiceChip(
+                    label: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 7.0),
+                      child: Text(
+                        category,
+                        style: const TextStyle(fontSize: 16), // 텍스트 크기 조정
                       ),
+                    ),
+                    selected: _selectedCategory == category,
+                    onSelected: (isSelected) {
+                      if (isSelected) _selectCategory(category);
+                    },
+                    labelPadding: const EdgeInsets.all(5.0), // 내부 패딩 추가
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0), // 모서리 둥글게
                     ),
                   );
                 }).toList(),
@@ -226,4 +288,4 @@ class _BackgroundImage extends StatelessWidget {
   }
 }
 
-//ㅎㅎ
+//image 수정 완
