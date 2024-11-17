@@ -61,7 +61,19 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-    - assets/images/바르셀로나/
+    - assets/images/map_image/
+    - assets/images/map_image/북아메리카/
+    - assets/images/map_image/북아메리카/풍경/
+    - assets/images/map_image/북아메리카/건축물/
+    - assets/images/map_image/북아메리카/액티비티/
+    - assets/images/map_image/아시아/
+    - assets/images/map_image/아시아/풍경/
+    - assets/images/map_image/아시아/건축물/
+    - assets/images/map_image/아시아/액티비티/
+    - assets/images/map_image/유럽/
+    - assets/images/map_image/유럽/풍경/
+    - assets/images/map_image/유럽/건축물/
+    - assets/images/map_image/유럽/액티비티/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
