@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
                         children: [
                           // Replace text with image
                           Image.asset(
-                            'assets/images/travel_mate.png',
+                            'assets/images/Travel_Mate.png',
                             width: 250,
                             height: 60,
                             fit: BoxFit.contain,

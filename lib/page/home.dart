@@ -7,7 +7,7 @@ import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/map.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage();
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,10 @@ class HomePage extends StatelessWidget {
                                     side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
                                     foregroundColor: AppColors.mainBlue, // 글자 색상
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => ChatbotPage()),
+                                  );},
                                   child: Text('나의 여행지'),
                                 ),
                               ],

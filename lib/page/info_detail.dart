@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
 
 class DetailInputScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: NavigationMenu(),
+      appBar:   NavigationMenu(),
       body: Stack(
         children: [
           _buildBackgroundImage(),
@@ -155,9 +156,10 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    // "Let's Go!" 버튼 클릭 시, 입력값 출력 코드 제거
-                  },
+                  onPressed: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatbotPage()),
+                  );},
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.white, minimumSize: Size(120, 50)),
                   child: Text("Let's Go!", style: TextStyle(fontSize: 18, color: AppColors.GreyBlue)),
                 ),
