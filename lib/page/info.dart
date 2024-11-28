@@ -27,6 +27,10 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   String _approximateWeeks = '0';
   String _approximateDays = '0';
 
+  bool _isDestinationConfirmed = false;
+  bool _isDateConfirmed = false;
+  bool _isDurationConfirmed = false;
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -91,10 +95,20 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행지 선택 섹션
           Row(
             children: [
-              Checkbox(value: false, onChanged: (value) {}),
+              Checkbox(
+              value: _isDestinationConfirmed,
+                onChanged: (value) {
+                  setState(() {
+                    _isDestinationConfirmed = value ?? false;
+                  });
+                },
+              ),
               Text(
                 "여행지를 결정했나요?",
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: _isDestinationConfirmed ? Colors.blue : Colors.black,
+                ),
               ),
               SizedBox(width: 32),
               SizedBox(
@@ -196,8 +210,21 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행 날짜 선택 섹션
           Row(
             children: [
-              Checkbox(value: false, onChanged: (value) {}),
-              Text("여행 날짜를 확정했어요!", style: TextStyle(fontSize: 14)),
+              Checkbox(
+                value: _isDateConfirmed,
+                onChanged: (value) {
+                  setState(() {
+                    _isDateConfirmed = value ?? false;
+                  });
+                },
+              ),
+              Text(
+                "여행 날짜를 확정했어요!",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: _isDateConfirmed ? Colors.blue : Colors.black,
+                ),
+              ),
               SizedBox(width: 32),
               Text('From', style: TextStyle(fontSize: 14)),
               SizedBox(width: 16),
@@ -227,10 +254,20 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행 기간 선택 섹션
           Row(
             children: [
-              Checkbox(value: false, onChanged: (value) {}),
+              Checkbox(
+                value: _isDurationConfirmed,
+                onChanged: (value) {
+                  setState(() {
+                    _isDurationConfirmed = value ?? false;
+                  });
+                },
+              ),
               Text(
-                '여행 기간만 확정했어요!',
-                style: TextStyle(fontSize: 14),
+                "여행 기간만 확정했어요!",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: _isDurationConfirmed ? Colors.blue : Colors.black,
+                ),
               ),
               SizedBox(width: 32),
               Text(' 대략', style: TextStyle(fontSize: 14)),
