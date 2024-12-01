@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/page/home.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
+import 'delete_acc.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 
@@ -160,15 +161,33 @@ class Login extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DeletePage()),
+                        );
+                      },
                       child: Text(
-                        '계정을 만들면서 로그인해주세요!',
+                        '계정삭제',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
-                          fontFamily: 'Montserrat',
+                          decoration: TextDecoration.underline,
                         ),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.transparent), // 기본 배경 투명
+                        foregroundColor: WidgetStateProperty.all(Colors.grey), // 텍스트 색상 고정
+                        overlayColor: WidgetStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
+                        shadowColor: WidgetStateProperty.all(Colors.transparent),
+                        minimumSize: WidgetStateProperty.all(Size(70, 30)),
+                        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        elevation: WidgetStateProperty.all(0),
                       ),
                     ),
                   ],

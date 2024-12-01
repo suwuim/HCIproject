@@ -94,7 +94,7 @@ class _MapState extends State<MapPage> {
                                       child: TextField(
                                         controller: _searchController,
                                         decoration: InputDecoration(
-                                          hintText: '국가명이나 도시명으로 검색해보세요',
+                                          hintText: '대륙이나 국가명으로 검색해보세요',
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(8.0),
                                           ),
@@ -187,6 +187,48 @@ class _MapState extends State<MapPage> {
                                       child: IconButton(
                                         icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
                                         onPressed: () => _selectRegion('북아메리카'),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 230,
+                                    right: 230,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _selectedRegion == '남아메리카' ? Colors.black26 : Colors.transparent,
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                        onPressed: () => _selectRegion('남아메리카'),
+                                      ),
+                                    ),  
+                                  ),
+                                  Positioned(
+                                    top: 240,
+                                    left: 550,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _selectedRegion == '오세아니아' ? Colors.black26 : Colors.transparent,
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                        onPressed: () => _selectRegion('오세아니아'),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 200,
+                                    left: 350,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _selectedRegion == '아프리카' ? Colors.black26 : Colors.transparent,
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                        onPressed: () => _selectRegion('아프리카'),
                                       ),
                                     ),
                                   ),

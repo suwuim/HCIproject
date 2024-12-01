@@ -1,6 +1,61 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:travelmate/page/login.dart';
+import 'package:travelmate/page/login_page.dart';
 
 class SignupPage extends StatelessWidget {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _signup(BuildContext context) async {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('아이디와 비밀번호를 입력해주세요.')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:5000/signup'), // Flask 서버의 회원가입 엔드포인트
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': username, 'password': password}),
+      );
+
+      if (response.statusCode == 201) {
+        // 성공적으로 회원가입 처리
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('회원가입 성공! 환영합니다.')),
+        );
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage())
+        );
+        //Navigator.pushReplacementNamed(context, '/login'); // 로그인 페이지로 이동
+      } else if (response.statusCode == 409) {
+        // 중복된 아이디일 경우
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('이미 존재하는 아이디입니다. 다른 아이디를 사용해주세요.')),
+        );
+      } else {
+        // 기타 오류
+        final responseBody = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseBody['error'] ?? '회원가입 실패')),
+        );
+      }
+    } catch (e) {
+      // 네트워크 오류 등
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('오류 발생: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,11 +80,26 @@ class SignupPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 50.0),
                       child: Column(
                         children: [
-                          Image.asset(
-                            'assets/images/travel_mate.png',
-                            width: 250,
-                            height: 60,
-                            fit: BoxFit.contain,
+                          ElevatedButton(
+                            onPressed:() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Login()),
+                              );
+                            },
+                            child: Image.asset(
+                              'assets/images/travel_mate.png',
+                              width: 250,
+                              height: 60,
+                              fit: BoxFit.contain,
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(Colors.transparent), // 기본 배경 투명
+                              foregroundColor: WidgetStateProperty.all(Colors.grey), // 텍스트 색상 고정
+                              overlayColor: WidgetStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
+                              shadowColor: WidgetStateProperty.all(Colors.transparent),
+                              elevation: WidgetStateProperty.all(0),
+                            ),
                           ),
                           SizedBox(height: 3),
                           Text(
@@ -66,6 +136,7 @@ class SignupPage extends StatelessWidget {
                         child: Column(
                           children: [
                             TextField(
+                              controller: _usernameController, // 컨트롤러 연결
                               decoration: InputDecoration(
                                 labelText: '아이디',
                                 hintText: '아이디를 입력하세요.',
@@ -73,25 +144,26 @@ class SignupPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
+                              onSubmitted: (value) => _signup(context),
                             ),
                             SizedBox(height: 20),
                             TextField(
+                              controller: _passwordController, // 컨트롤러 연결
                               obscureText: true,
                               decoration: InputDecoration(
                                 labelText: '비밀번호',
                                 hintText: '비밀번호를 입력하세요.',
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
+                              onSubmitted: (value) => _signup(context),
                             ),
                             SizedBox(height: 30),
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: () {
-                                  // Add your signup logic here
-                                },
+                                onPressed: () => _signup(context),
                                 child: Text(
                                   '회원가입',
                                   style: TextStyle(
