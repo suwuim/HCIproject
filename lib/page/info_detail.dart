@@ -3,8 +3,14 @@ import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class DetailInputScreen extends StatefulWidget {
+  int? infoId;
+  DetailInputScreen({required this.infoId});
+
   @override
   _DetailInputScreenState createState() => _DetailInputScreenState();
 }
@@ -12,12 +18,43 @@ class DetailInputScreen extends StatefulWidget {
 class _DetailInputScreenState extends State<DetailInputScreen> {
   static const double containerWidth = 0.9;
 
+  @override
+  void initState() {
+    super.initState();
+    print('기본정보->디테일정보 Info_ID: ${widget.infoId}');
+  }
+
+  Future<void> _sendDetail() async {
+    final url = Uri.parse('http://127.0.0.1:5000/infodetail');
+    final headers = {'Content-Type': 'application/json'};
+
+    final body = json.encode({
+      'info_id' : widget.infoId,
+      'detail_purpose' : _detailPurpose,
+      'interest' : _interest,
+      'special_place' : _specialPlace,
+      'religion': _religion,
+      'consideration' : _consideration,
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 201) {
+        print('디테일정보 보내기 성공 Info_ID: ${widget.infoId}');
+      } else {
+        print('Failed to send info detail: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   // String 변수로 각 입력값을 저장
-  String _purpose = '';
-  String _hobby = '';
+  String _detailPurpose = '';
+  String _interest = '';
   String _specialPlace = '';
   String _religion = '';
-  String _additionalNotes = '';
+  String _consideration = '';
 
   @override
   Widget build(BuildContext context) {
@@ -102,13 +139,13 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                   children: [
                     _buildTextInput('여행의 목적을 더 상세히 써주세요!', (value) {
                       setState(() {
-                        _purpose = value;
+                        _detailPurpose = value;
                       });
                     }),
                     SizedBox(height: 22),
                     _buildTextInput('취미 또는 관심사가 무엇인가요?', (value) {
                       setState(() {
-                        _hobby = value;
+                        _interest = value;
                       });
                     }),
                     SizedBox(height: 22),
@@ -132,7 +169,7 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                     SizedBox(height: 16),
                     _buildLargeTextInput('이 외에 고려사항이 있다면 작성해주세요!', (value) {
                       setState(() {
-                        _additionalNotes = value;
+                        _consideration = value;
                       });
                     }),
                   ],
@@ -156,7 +193,9 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () {Navigator.push(
+                  onPressed: () {
+                    _sendDetail();
+                    Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ChatbotPage()),
                   );},

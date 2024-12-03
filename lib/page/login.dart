@@ -163,7 +163,7 @@ class Login extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Text(
-                        '계정을 만들면서 로그인해주세요!',
+                        '저장을 원하시면 로그인하세요!',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,

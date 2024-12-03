@@ -6,8 +6,12 @@ import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/login.dart';
 import 'package:travelmate/page/map.dart';
 import 'package:travelmate/page/travelpickPage.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/userProvider.dart';
 
 class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
+  int? _userId;
+  String? _userName;
 
   Widget Menu(String name, GestureTapCallback onTap) {
     return InkWell(
@@ -28,6 +32,9 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
 
   @override
   Widget build(BuildContext context) {
+    _userId = Provider.of<UserProvider>(context, listen: false).userId;
+    _userName = Provider.of<UserProvider>(context, listen: false).userName;
+
     return Container(
       color: Colors.white,
       child: Row(
@@ -84,7 +91,8 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
               }),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: OutlinedButton(
+                child: _userId == null
+                    ? OutlinedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -96,7 +104,33 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                     foregroundColor: AppColors.mainBlue, // 글자 색상
                   ),
                   child: Text('로그인'),
-                ),
+                )
+                    : Row(
+                      children: [
+                        Tooltip(
+                          message: _userName.toString(),
+                          child: Icon(Icons.account_circle, size: 35, color: Colors.grey.shade500,)),
+                        SizedBox(width: 5,),
+                        OutlinedButton(
+                                          onPressed: () {
+                        Provider.of<UserProvider>(context, listen: false).logout();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('로그아웃 되었습니다.')),
+                        );
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                              (route) => false,
+                        );
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
+                        foregroundColor: AppColors.mainBlue, // 글자 색상
+                                          ),
+                                          child: Text('로그아웃'),
+                                        ),
+                      ],
+                    ),
               ),
               SizedBox(width: 40,)
             ],

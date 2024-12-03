@@ -1,18 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:travelmate/page/login.dart';
 import 'package:travelmate/page/home.dart';
-import 'package:provider/provider.dart';
-import 'package:travelmate/userProvider.dart';
+import 'package:travelmate/page/login.dart';
+import 'package:flutter/services.dart';
 
-class LoginPage extends StatelessWidget {
+class DeletePage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  int? _userId;
-  String? _userName;
 
-  Future<void> _login(BuildContext context) async {
+  Future<void> _delete(BuildContext context) async {
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -22,10 +19,39 @@ class LoginPage extends StatelessWidget {
       );
       return;
     }
+    // 삭제 확인 팝업
+    bool? confirmDelete = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('정말 삭제하시겠습니까?'),
+          content: Text('삭제하시면 만들어둔 여행 계획도 다 삭제되며, 복구할 수 없습니다.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // '예'
+              },
+              child: Text('예'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // '아니오'
+              },
+              child: Text('아니오'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == null || !confirmDelete) {
+      // 사용자가 '아니오'를 선택한 경우
+      return;
+    }
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:5000/user/login'), // Flask 서버의 로그인 엔드포인트
+        Uri.parse('http://127.0.0.1:5000/user/delete'), // Flask 서버의 로그인 엔드포인트
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': username, 'password': password}),
       );
@@ -34,24 +60,16 @@ class LoginPage extends StatelessWidget {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('로그인 성공! 환영합니다.')),
+          SnackBar(content: Text('계정 삭제가 완료되었습니다.')),
         );
-        final responseData = json.decode(response.body);
-        _userId = responseData['id'];
-        _userName = responseData['name'];
-        print("로그인성공 $_userId // $_userName");
-
-        Provider.of<UserProvider>(context, listen: false).setUserId(_userId);
-        Provider.of<UserProvider>(context, listen: false).setUserName(_userName);
-
         // 성공 시 홈 화면으로 이동
         Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage())
+            MaterialPageRoute(builder: (context) => Login())
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseBody['error'] ?? '로그인 실패')),
+          SnackBar(content: Text(responseBody['error'] ?? '계정 삭제 실패')),
         );
       }
     } catch (e) {
@@ -147,7 +165,7 @@ class LoginPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              onSubmitted: (value) => _login(context),
+                              onSubmitted: (value) => _delete(context),
                             ),
                             SizedBox(height: 20),
                             TextField(
@@ -160,15 +178,15 @@ class LoginPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              onSubmitted: (value) => _login(context),
+                              onSubmitted: (value) => _delete(context),
                             ),
                             SizedBox(height: 30),
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: () => _login(context),
+                                onPressed: () => _delete(context),
                                 child: Text(
-                                  '로그인',
+                                  '계정 삭제',
                                   style: TextStyle(
                                     fontSize: 20,
                                     color: Colors.white,
@@ -228,7 +246,7 @@ class LoginPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      'Login',
+                      'Delete Account',
                       style: TextStyle(
                         fontFamily: 'Krub',
                         fontSize: 32,

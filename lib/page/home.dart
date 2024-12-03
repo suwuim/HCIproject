@@ -5,12 +5,17 @@ import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/map.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/userProvider.dart';
 
 class HomePage extends StatelessWidget {
-
+  int? _userId;
 
   @override
   Widget build(BuildContext context) {
+    _userId = Provider.of<UserProvider>(context).userId;
+    print("홈페이지>> 로그인번호 $_userId");
+
     return Scaffold(
       appBar: NavigationMenu(),
       body: SingleChildScrollView(
@@ -66,21 +71,25 @@ class HomePage extends StatelessWidget {
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
-                                    foregroundColor: AppColors.mainBlue, // 글자 색상
+                                    foregroundColor: Colors.white, // 글자 색상
+                                    backgroundColor: AppColors.mainBlue,
+                                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                                   ),
-                                  child: Text('여행 만들기'),
+                                  child: Text('여행 만들기', style: TextStyle(fontSize: 20),),
                                 ),
                                 SizedBox(width: 10),
                                 OutlinedButton(
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: AppColors.mainBlue, width: 2), // 테두리 색과 두께
                                     foregroundColor: AppColors.mainBlue, // 글자 색상
+                                    backgroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                                   ),
                                   onPressed: () {Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => ChatbotPage()),
                                   );},
-                                  child: Text('나의 여행지'),
+                                  child: Text('나의 여행지', style: TextStyle(fontSize: 20)),
                                 ),
                               ],
                             ),
