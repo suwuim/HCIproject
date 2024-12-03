@@ -51,7 +51,7 @@ class DeletePage extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:5000/delete'), // Flask 서버의 로그인 엔드포인트
+        Uri.parse('http://127.0.0.1:5000/user/delete'), // Flask 서버의 로그인 엔드포인트
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': username, 'password': password}),
       );

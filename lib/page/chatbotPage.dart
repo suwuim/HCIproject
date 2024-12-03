@@ -15,33 +15,36 @@ class _ChatbotPageState extends State<ChatbotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavigationMenu(),
-      body: Column(
-        children: [
-          Expanded(
+      backgroundColor: Colors.white, // 배경색 고정
+      body: Container(
+        color: Colors.white, // 전체 컨테이너 배경색 흰색 고정
+        child: Column(
+          children: [
+            Expanded(
               child: Row(
                 children: [
                   Expanded(
                     flex: 1,
-                    child: ChatScreen(chatTitle: '퀸스타운: 5박 6일',),
+                    child: Container(
+                      color: Colors.white, // ChatScreen 배경색 흰색 고정
+                      child: ChatScreen(
+                        chatTitle: '퀸스타운: 5박 6일',
+                      ),
+                    ),
                   ),
                   Expanded(
                     flex: 1,
-                    child: ChatSchedule(),
+                    child: Container(
+                      color: Colors.white, // ChatSchedule 배경색 흰색 고정
+                      child: ChatSchedule(),
+                    ),
                   ),
                 ],
-              )
-          ),
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-

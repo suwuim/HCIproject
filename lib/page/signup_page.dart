@@ -21,7 +21,7 @@ class SignupPage extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:5000/signup'), // Flask 서버의 회원가입 엔드포인트
+        Uri.parse('http://127.0.0.1:5000/user/signup'), // Flask 서버의 회원가입 엔드포인트
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': username, 'password': password}),
       );
