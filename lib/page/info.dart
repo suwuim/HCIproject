@@ -73,6 +73,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
         });
 
         print('기본정보 보내기 성공 Info_ID: $_infoId');
+
       } else {
         print('Failed to send data: ${response.statusCode}');
       }
@@ -94,7 +95,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   bool _decidePlace = false;
   String? _place;
 
-  bool _decideDate = false;
+  bool _decideDate = true;
   DateTime? _dateStart;
   DateTime? _dateEnd;
 
@@ -105,17 +106,27 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   int? _spanDay;
 
   bool isAllSelected() {
-    return _age != null && _gender != null && _transport != null &&
-        _budget != null && _purpose != null && _type != null && _num != null &&
+    bool isDateOrSpanSelected = _decideDate || _decideSpan;
+
+    return isDateOrSpanSelected &&
+        _age != null &&
+        _gender != null &&
+        _transport != null &&
+        _budget != null &&
+        _purpose != null &&
+        _type != null &&
+        _num != null &&
         (!_decidePlace || (_decidePlace && _place != null)) &&
         (!_decideDate || (_decideDate && _dateStart != null && _dateEnd != null)) &&
-        (!_decideSpan || (_decideSpan && (_spanApprox != null || _spanMonth != null || _spanWeek != null || _spanDay != null)));
+        (!_decideSpan || (_decideSpan && _spanApprox != null && _spanMonth != null && _spanWeek != null && _spanDay != null));
   }
+
+
 
   void showMissingFieldsSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('필수 항목을 다 입력해주세요.'),
+        content: Text('필수 항목을 다 입력해주세요. $_decideSpan, $_spanDay, $_spanWeek, $_spanMonth, $_spanApprox'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -311,7 +322,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
               Text("여행 날짜를 확정했어요!", style: TextStyle(fontSize: 14)),
               SizedBox(width: 32),
               Visibility(
-                visible: isDateSelected,
+                visible: isDateSelected || _decideDate == true,
                 child: Row(
                   children: [
                     Text('From', style: TextStyle(fontSize: 14)),
@@ -380,16 +391,18 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                     SizedBox(width: 16),
                     SizedBox(
                       width: 150,
-                      child: _buildDropdownInput('Months', List.generate(7, (index) => '$index'), (value) {
-                        setState(() {
-                          _spanMonth = (value as int?) ?? 0;
-                        });
-                      }),
+                      child: _buildDropdownInput('Months', List.generate(7, (index) => index), (value) {
+                          setState(() {
+                            _spanMonth = value as int?;
+                          });
+                        },
+                      ),
                     ),
+
                     SizedBox(width: 16),
                     SizedBox(
                       width: 150,
-                      child: _buildDropdownInput('Weeks', List.generate(7, (index) => '$index'), (value) {
+                      child: _buildDropdownInput('Weeks', List.generate(7, (index) => index), (value) {
                         setState(() {
                           _spanWeek = (value as int?) ?? 0;
                         });
@@ -398,7 +411,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                     SizedBox(width: 16),
                     SizedBox(
                       width: 150,
-                      child: _buildDropdownInput('Days', List.generate(7, (index) => '$index'), (value) {
+                      child: _buildDropdownInput('Days', List.generate(7, (index) => index), (value) {
                         setState(() {
                           _spanDay = (value as int?) ?? 0;
                         });
@@ -459,10 +472,10 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
     );
   }
 
-  Widget _buildDropdownInput(String label, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _buildDropdownInput<T>(String label, List<T> items, ValueChanged<T?> onChanged) {
     return SizedBox(
       width: 250,
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField<T>(
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(fontSize: 14),
@@ -471,11 +484,17 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           fillColor: Colors.white,
           filled: true,
         ),
-        items: items.map((item) => DropdownMenuItem(child: Text(item), value: item)).toList(),
+        items: items
+            .map((item) => DropdownMenuItem<T>(
+          child: Text(item.toString()), // 모든 타입을 문자열로 변환해 표시
+          value: item,
+        ))
+            .toList(),
         onChanged: onChanged,
       ),
     );
   }
+
 
   Widget _buildTextInput(String label, ValueChanged<String> onChanged) {
     return TextField(

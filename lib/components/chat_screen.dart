@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/components/chatDrawerWidget.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
   String chatTitle;
@@ -13,29 +15,65 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-
 class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> _messages = [];
   final List<String> _chatList = ['뉴욕: 2주', '바르셀로나: 기간 미정', '로스엔젤레스: 6박 7일'];
 
-  void _handleSendMessage(String message) {
+  // 백엔드 주소 업데이트
+  final String _backendUrl = 'http://127.0.0.1:5000/llm/chat'; // Flask 서버 주소
+
+  void _handleSendMessage(String message) async {
     if (message.isNotEmpty) {
       setState(() {
-        _messages.add({'message': message, 'sender': 'me'});
+        _messages.add({'content': message, 'sender': 'user'}); // 사용자 메시지 추가
       });
+
+      // 백엔드로 메시지 전송 및 응답 처리
+      try {
+        final responseMessage = await _sendMessageToBackend(message);
+        setState(() {
+          _messages.add({'content': responseMessage, 'sender': 'system'}); // 백엔드 응답 추가
+        });
+      } catch (e) {
+        setState(() {
+          _messages.add({
+            'content': '오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            'sender': 'system'
+          });
+        });
+      }
     }
   }
 
-  void _handleTestMessage(String message) {
-    setState(() {
-      _messages.add({'message': '상대방의 메시지', 'sender': 'other'});
-    });
+  // 백엔드와 통신하는 함수
+  Future<String> _sendMessageToBackend(String message) async {
+    try {
+      final response = await http.post(
+        Uri.parse(_backendUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'content': message}),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return responseData['content'] ?? '응답을 생성할 수 없습니다.';
+      } else {
+        return '서버 오류: ${response.statusCode}';
+      }
+    } catch (e) {
+      return '네트워크 오류가 발생했습니다.';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.chatTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),),
+      appBar: AppBar(
+        title: Text(
+          widget.chatTitle,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+        ),
+      ),
       drawer: Drawer(
         child: ChatDrawer(),
       ),
@@ -45,49 +83,64 @@ class _ChatScreenState extends State<ChatScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: _messages.map((messageData) {
-                  final message = messageData['message']!;
+                  final message = messageData['content']!;
                   final sender = messageData['sender']!;
 
                   return Row(
-                    mainAxisAlignment: sender == 'me' ? MainAxisAlignment.end : MainAxisAlignment.start,
+                    mainAxisAlignment: sender == 'user'
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (sender == 'other') ...[
+                      if (sender == 'system') ...[
                         Padding(
                           padding: const EdgeInsets.only(left: 30.0),
                           child: CircleAvatar(
-                            backgroundImage: AssetImage('assets/images/챗봇프사.png'),
+                            backgroundImage:
+                            AssetImage('assets/images/챗봇프사.png'),
                             radius: 20,
                           ),
                         ),
                         SizedBox(width: 5),
                       ],
                       Column(
-                        crossAxisAlignment: sender == 'me' ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                        crossAxisAlignment: sender == 'user'
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                             margin: EdgeInsets.symmetric(horizontal: 10),
                             decoration: BoxDecoration(
-                              color: sender == 'me' ? Color(0xFF689ADB) : Colors.white,
+                              color: sender == 'user'
+                                  ? Color(0xFF689ADB)
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                 color: Color(0xFF627A98),
                               ),
                             ),
-                            child: Text(
-                              message,
-                              style: TextStyle(
-                                color: sender == 'me' ? Colors.white : Color(0xFF1B2559),
-                                fontSize: 16,
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width * 0.4, // 최대 폭 제한
                               ),
-                              softWrap: true,
+                              child: Text(
+                                message,
+                                style: TextStyle(
+                                  color: sender == 'user'
+                                      ? Colors.white
+                                      : Color(0xFF1B2559),
+                                  fontSize: 16,
+                                ),
+                                softWrap: true, // 줄 바꿈 허용
+                                overflow: TextOverflow.visible, // 내용이 넘치지 않도록 설정
+                              ),
                             ),
                           ),
-                          if (sender == 'me') ...[
-                            SizedBox(height: 15,)   //채팅간격
+                          if (sender == 'user') ...[
+                            SizedBox(height: 15), // 채팅 간격
                           ],
-                          if (sender == 'other') ...[
+                          if (sender == 'system') ...[
                             Container(
                               padding: EdgeInsets.symmetric(vertical: 3),
                               margin: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
@@ -98,21 +151,28 @@ class _ChatScreenState extends State<ChatScreen> {
                                 border: Border.all(color: Colors.black),
                               ),
                               child: TextButton(
-                                onPressed: () {
-                                },
+                                onPressed: () {},
                                 child: Row(
                                   children: [
-                                    Icon(Icons.restart_alt, color: Colors.black, size: 14,),
-                                    Text(' 응답 다시 생성하기', style: TextStyle(fontSize: 11, color: Colors.black),),
+                                    Icon(
+                                      Icons.restart_alt,
+                                      color: Colors.black,
+                                      size: 14,
+                                    ),
+                                    Text(
+                                      ' 응답 다시 생성하기',
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.black),
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                            SizedBox(height: 15,)   //채팅간격
+                            SizedBox(height: 15), // 채팅 간격
                           ],
                         ],
                       ),
-                      if (sender == 'me') ...[
+                      if (sender == 'user') ...[
                         SizedBox(width: 23),
                       ],
                     ],
@@ -121,32 +181,26 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(left: 30),
             child: Row(
               children: [
-                RecommendQuestionBox(question: '숙소가 어두운 골목은 피하고 싶어요'),
+                RecommendQuestionBox(
+                    question: '숙소가 어두운 골목은 피하고 싶어요'),
                 RecommendQuestionBox(question: '유명한 호수를 꼭 구경하고 싶어요'),
                 RecommendQuestionBox(question: '미슐랭 레스토랑에 가고 싶어요'),
               ],
             ),
           ),
-
           ChatInputBar(
             onSend: _handleSendMessage,
           ),
-          ChatInputBar(
-            onSend: _handleTestMessage,
-          ),
-          SizedBox(height: 40,)
+          SizedBox(height: 40),
         ],
       ),
     );
   }
 }
-
-
 
 class ChatInputBar extends StatelessWidget {
   final Function(String) onSend;
@@ -161,31 +215,39 @@ class ChatInputBar extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 30),
       padding: EdgeInsets.only(left: 20, right: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFC9DDED), width: 2),
-        borderRadius: BorderRadius.circular(10)
-      ),
+          border: Border.all(color: Color(0xFFC9DDED), width: 2),
+          borderRadius: BorderRadius.circular(10)),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _controller,
-              decoration: InputDecoration(hintText: '무엇이든 물어보세요', border: InputBorder.none),
+              decoration: InputDecoration(
+                hintText: '무엇이든 물어보세요',
+                border: InputBorder.none,
+              ),
+              onSubmitted: (value) {
+                onSend(value);
+                _controller.clear();
+              }, // 엔터 키를 눌렀을 때 동작
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send, color: AppColors.DarkBlue,),
+            icon: Icon(
+              Icons.send,
+              color: AppColors.DarkBlue,
+            ),
             onPressed: () {
               onSend(_controller.text);
               _controller.clear();
-            },
+            }, // send 버튼 클릭 시 동작
           ),
         ],
       ),
+
     );
   }
 }
-
-
 
 class RecommendQuestionBox extends StatefulWidget {
   final String question;
@@ -204,9 +266,7 @@ class _RecommendQuestionBoxState extends State<RecommendQuestionBox> {
     return InkWell(
       focusColor: Colors.transparent,
       hoverColor: Colors.transparent,
-      onTap: (){
-
-      },
+      onTap: () {},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         margin: EdgeInsets.only(right: 10, bottom: 10),
@@ -216,7 +276,10 @@ class _RecommendQuestionBoxState extends State<RecommendQuestionBox> {
         ),
         child: Text(
           widget.question,
-          style: TextStyle(color: Colors.black, fontSize: 13,),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 13,
+          ),
         ),
       ),
     );

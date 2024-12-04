@@ -112,7 +112,7 @@ class _ChatScheduleState extends State<ChatSchedule> {
                             topRight: Radius.circular(8),
                           ),
                           border: Border.all(
-                            color: AppColors.DarkBlue
+                              color: AppColors.DarkBlue
                           ),
                         ),
                         child: Text(
@@ -165,7 +165,9 @@ class _ChatScheduleState extends State<ChatSchedule> {
           ),
         ),
         if (showFirstContent)
-        ScheduleWidget(),
+          Container(
+            margin: EdgeInsets.only(top: 120),
+            child: ScheduleWidget()),
 
 
         //다운, 공유 버튼

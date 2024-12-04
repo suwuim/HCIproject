@@ -9,7 +9,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 40, top: 160, right: 20, bottom: 40),
+      margin: EdgeInsets.only(left: 40, top:40, right: 20, bottom: 40),
       child: Stack(
         children: [
           // 점선을 그리는 CustomPainter
