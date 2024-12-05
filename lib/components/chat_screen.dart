@@ -18,8 +18,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> _messages = [];
   final List<String> _chatList = ['뉴욕: 2주', '바르셀로나: 기간 미정', '로스엔젤레스: 6박 7일'];
+  final TextEditingController _textController = TextEditingController();
 
-  // 백엔드 주소 업데이트
   final String _backendUrl = 'http://127.0.0.1:5000/llm/chat'; // Flask 서버 주소
 
   void _handleSendMessage(String message) async {
@@ -186,14 +186,26 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 RecommendQuestionBox(
-                    question: '숙소가 어두운 골목은 피하고 싶어요'),
-                RecommendQuestionBox(question: '유명한 호수를 꼭 구경하고 싶어요'),
-                RecommendQuestionBox(question: '미슐랭 레스토랑에 가고 싶어요'),
+                    question: '숙소가 어두운 골목은 피하고 싶어요',
+                    onQuestionSelected: (question) {
+                      _textController.text = question; // 텍스트 설정
+                    }),
+                RecommendQuestionBox(
+                    question: '유명한 호수를 꼭 구경하고 싶어요',
+                    onQuestionSelected: (question) {
+                      _textController.text = question; // 텍스트 설정
+                    }),
+                RecommendQuestionBox(
+                    question: '미슐랭 레스토랑에 가고 싶어요',
+                    onQuestionSelected: (question) {
+                      _textController.text = question; // 텍스트 설정
+                    }),
               ],
             ),
           ),
           ChatInputBar(
             onSend: _handleSendMessage,
+            controller: _textController,
           ),
           SizedBox(height: 40),
         ],
@@ -204,13 +216,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
 class ChatInputBar extends StatelessWidget {
   final Function(String) onSend;
+  final TextEditingController controller;
 
-  const ChatInputBar({Key? key, required this.onSend}) : super(key: key);
+  const ChatInputBar({required this.controller, required this.onSend});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30),
       padding: EdgeInsets.only(left: 20, right: 10),
@@ -221,14 +232,14 @@ class ChatInputBar extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              controller: _controller,
+              controller: controller,
               decoration: InputDecoration(
                 hintText: '무엇이든 물어보세요',
                 border: InputBorder.none,
               ),
               onSubmitted: (value) {
                 onSend(value);
-                _controller.clear();
+                controller.clear();
               }, // 엔터 키를 눌렀을 때 동작
             ),
           ),
@@ -238,8 +249,8 @@ class ChatInputBar extends StatelessWidget {
               color: AppColors.DarkBlue,
             ),
             onPressed: () {
-              onSend(_controller.text);
-              _controller.clear();
+              onSend(controller.text);
+              controller.clear();
             }, // send 버튼 클릭 시 동작
           ),
         ],
@@ -249,24 +260,23 @@ class ChatInputBar extends StatelessWidget {
   }
 }
 
-class RecommendQuestionBox extends StatefulWidget {
+class RecommendQuestionBox extends StatelessWidget {
   final String question;
+  final Function(String) onQuestionSelected;
 
   const RecommendQuestionBox({
     required this.question,
+    required this.onQuestionSelected,
   });
 
-  @override
-  _RecommendQuestionBoxState createState() => _RecommendQuestionBoxState();
-}
-
-class _RecommendQuestionBoxState extends State<RecommendQuestionBox> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
       focusColor: Colors.transparent,
       hoverColor: Colors.transparent,
-      onTap: () {},
+      onTap: () {
+        onQuestionSelected(question);
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         margin: EdgeInsets.only(right: 10, bottom: 10),
@@ -275,7 +285,7 @@ class _RecommendQuestionBoxState extends State<RecommendQuestionBox> {
           borderRadius: BorderRadius.circular(50),
         ),
         child: Text(
-          widget.question,
+          question,
           style: TextStyle(
             color: Colors.black,
             fontSize: 13,
