@@ -227,7 +227,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           Text("*필수항목", style: TextStyle(color: Colors.red),),
           _buildAlignedInputRow(context, [
             _buildDropdownInput('나이', [
-              '청소년', '20대 초반', '20대 후반 ~ 30대 초반', '30대 후반 ~ 40대', '50대 이상', '밝히고 싶지 않음'
+              '청소년', '20대 초반', '20대 후반', '30대 초반', '30대 후반', '40대', '50대', '60대 이상', '밝히고 싶지 않음'
             ], (value) {
               setState(() {
                 _age = value ?? '';
@@ -266,8 +266,8 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                     child: Slider(
                       value: (_budget ?? 0).toDouble(),
                       min: 0,
-                      max: 300,
-                      divisions: 30,
+                      max: 5000,
+                      divisions: 100,
                       label: "${_budget?.round() ?? 0} 만원",
                       onChanged: (newValue) {
                         setState(() {

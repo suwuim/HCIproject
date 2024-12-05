@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/login.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Login()
+      home: ChatbotPage()
     );
   }
 }

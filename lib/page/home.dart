@@ -8,8 +8,41 @@ import 'package:travelmate/page/map.dart';
 import 'package:provider/provider.dart';
 import 'package:travelmate/userProvider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  final double? scrollToPosition; // 외부에서 스크롤 위치를 지정할 수 있도록 추가
+
+  HomePage({this.scrollToPosition});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late ScrollController _scrollController;
   int? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+
+    // 만약 scrollToPosition이 전달되면 해당 위치로 스크롤
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.scrollToPosition != null) {
+        _scrollController.animateTo(
+          widget.scrollToPosition!,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +52,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: NavigationMenu(),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(

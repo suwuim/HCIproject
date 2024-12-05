@@ -284,8 +284,44 @@ class PrepareContent extends StatefulWidget {
 }
 
 class _PrepareContentState extends State<PrepareContent> {
+  String rawText = '''
+  ### 준비물 추천.
+  1. **여권 및 여행 관련 서류**: 해외 여행을 하기 위해 필수입니다.
+  2. **휴대전화 및 충전기**: 구글 맵 및 소셜 미디어 활용을 위해 필요합니다.
+  3. **편한 신발**: 도보 이동이 많아 편안한 신발이 필수입니다.
+  4. **가벼운 외투**: 겨울철 도쿄는 추울 수 있으니 따뜻한 옷을 준비하세요.
+  5. **현금 및 카드**: 도쿄에서 일부 가게는 카드 결제가 안 될 수 있으니 현금을 준비하세요.
+  6. **카메라**: 추억을 남기기 위해 필요합니다.
+  7. **일본어 통역 앱**: 언어 장벽을 줄이기 위해 유용합니다.
+  ''';
+
+  List<Map<String, String>> parsePreparationItems(String input) {
+    final items = <Map<String, String>>[];
+
+    // '### 준비물' 이후의 텍스트 추출
+    final preparationStart = input.indexOf('### 준비물');
+    if (preparationStart == -1) return items; // 준비물이 없으면 빈 리스트 반환
+
+    final preparationText = input.substring(preparationStart).split('\n').skip(1).toList();
+
+    for (final line in preparationText) {
+      final match = RegExp(r'\*\*(.*?)\*\*: (.*)').firstMatch(line);
+      if (match != null) {
+        items.add({
+          "title": match.group(1)!,
+          "description": match.group(2)!,
+        });
+      }
+    }
+
+    return items;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final preparationItems = parsePreparationItems(rawText);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -322,10 +358,82 @@ class _PrepareContentState extends State<PrepareContent> {
             padding: const EdgeInsets.only(left: 30),
             child: Image.asset("assets/images/일정데코.png"),
           ),
-          Expanded(child: Container())
+          PreparationList(preparationItems: preparationItems)
         ],
       ),
     );
   }
 }
+
+
+class PreparationList extends StatefulWidget {
+  final List<Map<String, String>> preparationItems;
+
+  PreparationList({required this.preparationItems});
+
+  @override
+  _PreparationListState createState() => _PreparationListState();
+}
+
+class _PreparationListState extends State<PreparationList> {
+  late List<bool> isCheckedList; // 체크박스 상태를 관리하는 리스트
+
+  @override
+  void initState() {
+    super.initState();
+    isCheckedList = List<bool>.filled(widget.preparationItems.length, false); // 초기 상태: 모두 체크 해제
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: ListView.builder(
+          itemCount: widget.preparationItems.length,
+          itemBuilder: (context, index) {
+            final item = widget.preparationItems[index];
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isCheckedList[index],
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCheckedList[index] = value ?? false; // 상태 업데이트
+                                });
+                              },
+                            ),
+                            Expanded(
+                              child: Text(
+                                item["title"]!,
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Text(item["description"]!),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 
