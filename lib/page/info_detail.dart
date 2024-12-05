@@ -3,9 +3,12 @@ import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/sessionProvider.dart';
+import 'package:travelmate/userProvider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:intl/intl.dart';
 
 class DetailInputScreen extends StatefulWidget {
   int? infoId;
@@ -17,10 +20,13 @@ class DetailInputScreen extends StatefulWidget {
 
 class _DetailInputScreenState extends State<DetailInputScreen> {
   static const double containerWidth = 0.9;
+  int? _userId;
+  int? _sessionId;
 
   @override
   void initState() {
     super.initState();
+    _userId = Provider.of<UserProvider>(context, listen: false).userId;
     print('기본정보->디테일정보 Info_ID: ${widget.infoId}');
   }
 
@@ -43,6 +49,31 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
         print('디테일정보 보내기 성공 Info_ID: ${widget.infoId}');
       } else {
         print('Failed to send info detail: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> _createSession() async {
+    final url = Uri.parse('http://127.0.0.1:5000/sesh/session');
+    final headers = {'Content-Type': 'application/json'};
+
+
+    final body = json.encode({
+      'user_id' : _userId,
+      'info_id' : widget.infoId,
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 201) {
+        print('Session 만들기 성공 infoId: ${widget.infoId}');
+
+        final responseData = json.decode(response.body);
+        _sessionId = responseData['session_id'];
+        Provider.of<SessionProvider>(context, listen: false).setSessionId(_sessionId);
+        print('Session ID: ${_sessionId}');
       }
     } catch (e) {
       print('Error: $e');
@@ -193,12 +224,13 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    _sendDetail();
+                  onPressed: () async {
+                    await _sendDetail();
+                    await _createSession();
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatbotPage()),
-                  );},
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatbotPage()),
+                    );},
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.white, minimumSize: Size(120, 50)),
                   child: Text("Let's Go!", style: TextStyle(fontSize: 18, color: AppColors.GreyBlue)),
                 ),

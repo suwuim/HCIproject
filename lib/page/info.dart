@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:travelmate/userProvider.dart';
+import 'package:travelmate/infoProvider.dart';
 
 class SelectInputScreen extends StatefulWidget {
   @override
@@ -73,7 +74,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
         });
 
         print('기본정보 보내기 성공 Info_ID: $_infoId');
-
+        Provider.of<InfoProvider>(context, listen: false).setInfoId(_infoId);
       } else {
         print('Failed to send data: ${response.statusCode}');
       }
