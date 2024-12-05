@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/login.dart';
-import 'package:travelmate/page/signup_page.dart';
+import 'package:travelmate/userProvider.dart';
+import 'package:travelmate/infoProvider.dart';
+import 'package:travelmate/sessionProvider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => InfoProvider()),
+        ChangeNotifierProvider(create: (context) => SessionProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,5 +28,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

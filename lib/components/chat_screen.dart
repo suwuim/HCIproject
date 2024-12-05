@@ -3,6 +3,10 @@ import 'package:travelmate/components/chatDrawerWidget.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:travelmate/userProvider.dart';
+import 'package:travelmate/infoProvider.dart';
+import 'package:travelmate/sessionProvider.dart';
 
 class ChatScreen extends StatefulWidget {
   String chatTitle;
@@ -19,18 +23,30 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> _messages = [];
   final List<String> _chatList = ['뉴욕: 2주', '바르셀로나: 기간 미정', '로스엔젤레스: 6박 7일'];
 
-  // 백엔드 주소 업데이트
-  final String _backendUrl = 'http://127.0.0.1:5000/llm/chat'; // Flask 서버 주소
+  int? _userId;
+  int? _infoId;
+  int? _sessionId;
 
-  void _handleSendMessage(String message) async {
+  @override
+  void initState(){
+    super.initState();
+    _userId = Provider.of<UserProvider>(context, listen: false).userId;
+    _infoId = Provider.of<InfoProvider>(context, listen: false).infoId;
+    _sessionId = Provider.of<SessionProvider>(context, listen: false).sessionId;
+    print("User ID: ${_userId}, Info ID: ${_infoId}, Session ID: ${_sessionId}");
+  }
+
+  // 백엔드 주소 업데이트 (chat)
+  Future<void> _handleSendMessage(String message) async {
+    final url = Uri.parse('http://127.0.0.1:5000/llm/chat'); // Flask 서버 주소
     if (message.isNotEmpty) {
       setState(() {
         _messages.add({'content': message, 'sender': 'user'}); // 사용자 메시지 추가
       });
-
-      // 백엔드로 메시지 전송 및 응답 처리
       try {
-        final responseMessage = await _sendMessageToBackend(message);
+        final sessionID = _sessionId;
+        final infoID = _infoId;
+        final responseMessage = await _sendMessageToBackend(message, url, sessionID, infoID);
         setState(() {
           _messages.add({'content': responseMessage, 'sender': 'system'}); // 백엔드 응답 추가
         });
@@ -44,16 +60,18 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
   }
-
-  // 백엔드와 통신하는 함수
-  Future<String> _sendMessageToBackend(String message) async {
+  Future<String> _sendMessageToBackend(String message, url, sessionID, infoID) async {
     try {
       final response = await http.post(
-        Uri.parse(_backendUrl),
+        url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'content': message}),
+        body: jsonEncode({
+          'content': message,
+          'session_id':sessionID,
+          'info_id': infoID,
+        }),
       );
-
+      print('test ${sessionID}');
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         return responseData['content'] ?? '응답을 생성할 수 없습니다.';

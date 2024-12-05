@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:travelmate/page/login.dart';
 import 'package:travelmate/page/home.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/userProvider.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  int? _userId;
+  String? _userName;
 
   Future<void> _login(BuildContext context) async {
     final username = _usernameController.text.trim();
@@ -32,6 +36,14 @@ class LoginPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('로그인 성공! 환영합니다.')),
         );
+        final responseData = json.decode(response.body);
+        _userId = responseData['id'];
+        _userName = responseData['name'];
+        print("로그인성공 $_userId // $_userName");
+
+        Provider.of<UserProvider>(context, listen: false).setUserId(_userId);
+        Provider.of<UserProvider>(context, listen: false).setUserName(_userName);
+
         // 성공 시 홈 화면으로 이동
         Navigator.pushReplacement(
             context,
@@ -86,11 +98,11 @@ class LoginPage extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                             style: ButtonStyle(
-                              backgroundColor: WidgetStateProperty.all(Colors.transparent), // 기본 배경 투명
-                              foregroundColor: WidgetStateProperty.all(Colors.grey), // 텍스트 색상 고정
-                              overlayColor: WidgetStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
-                              shadowColor: WidgetStateProperty.all(Colors.transparent),
-                              elevation: WidgetStateProperty.all(0),
+                              backgroundColor: MaterialStateProperty.all(Colors.transparent), // 기본 배경 투명
+                              foregroundColor: MaterialStateProperty.all(Colors.grey), // 텍스트 색상 고정
+                              overlayColor: MaterialStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
+                              shadowColor: MaterialStateProperty.all(Colors.transparent),
+                              elevation: MaterialStateProperty.all(0),
                             ),
                           ),
                           SizedBox(height: 3),

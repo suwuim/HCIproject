@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/info_detail.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/userProvider.dart';
+import 'package:travelmate/infoProvider.dart';
 
 class SelectInputScreen extends StatefulWidget {
   @override
@@ -9,23 +15,113 @@ class SelectInputScreen extends StatefulWidget {
 }
 
 class _SelectInputScreenState extends State<SelectInputScreen> {
-  // 예산 범위 슬라이더 값 설정
-  double _budgetValue = 100; // 초기 예산 값
+  bool isPlaceSelected = false;
+  bool isDateSelected = false;
+  bool isSpanSelected = false;
+  int? _infoId;
+  int? _userId;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _userId = Provider.of<UserProvider>(context, listen: false).userId;
+  }
+
+
+  String? formatDateForMySQL(DateTime? date) {
+    if (date == null) {
+      return null;
+    }
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
+
+  Future<void> _sendDataToApi() async {
+    final url = Uri.parse('http://127.0.0.1:5000/info');
+    final headers = {'Content-Type': 'application/json'};
+
+    final body = json.encode({
+      'user_id': _userId ?? 1,
+      'age': _age,
+      'gender': _gender,
+      'transport': _transport,  //null OK
+      'budget': _budget,
+      'purpose': _purpose,
+      'type': _type,
+      'num': _num,
+
+      'decide_place': _decidePlace,
+      'place': _place,  //null OK
+
+      'decide_date': _decideDate,
+      'date_start': formatDateForMySQL(_dateStart),  //null OK
+      'date_end': formatDateForMySQL(_dateEnd),  //null OK
+
+      'decide_span': _decideSpan,
+      'span_approx': _spanApprox,  //null OK
+      'span_month': _spanMonth,  //null OK
+      'span_week': _spanWeek,  //null OK
+      'span_day': _spanDay,  //null OK
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        setState(() {
+          _infoId = responseData['info_id'];
+        });
+        print('기본정보 보내기 성공 Info_ID: $_infoId');
+        Provider.of<InfoProvider>(context, listen: false).setInfoId(_infoId);
+      } else {
+        print('Failed to send data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   // 입력 값 저장 변수
-  String _destination = '';
-  String _ageGroup = '';
-  String _gender = '';
-  String _transportation = '';
-  String _purpose = '';
-  String _travelerType = '';
-  String _travelerCount = '';
-  String _startDate = '';
-  String _endDate = '';
-  String _approximateMonth = '';
-  String _approximateMonths = '0';
-  String _approximateWeeks = '0';
-  String _approximateDays = '0';
+
+  String? _age;
+  String? _gender;
+  String? _transport;
+  int? _budget;
+  String? _purpose;
+  String? _type;
+  String? _num;
+
+  bool _decidePlace = false;
+  String? _place;
+
+  bool _decideDate = false;
+  DateTime? _dateStart;
+  DateTime? _dateEnd;
+
+  bool _decideSpan = false;
+  String? _spanApprox;
+  int? _spanMonth;
+  int? _spanWeek;
+  int? _spanDay;
+
+  bool isAllSelected() {
+    return _age != null && _gender != null && _transport != null &&
+        _budget != null && _purpose != null && _type != null && _num != null &&
+        (!_decidePlace || (_decidePlace && _place != null)) &&
+        (!_decideDate || (_decideDate && _dateStart != null && _dateEnd != null)) &&
+        (!_decideSpan || (_decideSpan && (_spanApprox != null || _spanMonth != null || _spanWeek != null || _spanDay != null)));
+  }
+
+  void showMissingFieldsSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('필수 항목을 다 입력해주세요.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,31 +187,40 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행지 선택 섹션
           Row(
             children: [
-              Checkbox(value: false, onChanged: (value) {}),
+              Checkbox(value: _decidePlace, onChanged: (value) {
+                setState(() {
+                  _decidePlace = value ?? false;
+                  isPlaceSelected = _decidePlace;
+                });},
+              ),
               Text(
                 "여행지를 결정했나요?",
                 style: TextStyle(fontSize: 14),
               ),
               SizedBox(width: 32),
-              SizedBox(
-                width: 360,
-                child: _buildTextInput('여행지 입력', (value) {
-                  setState(() {
-                    _destination = value;
-                  });
-                }),
+              Visibility(
+                visible: isPlaceSelected,
+                child: SizedBox(
+                  width: 360,
+                  child: _buildTextInput('여행지 입력', (value) {
+                    setState(() {
+                      _place = value;
+                    });
+                  }),
+                ),
               ),
             ],
           ),
           Divider(color: Colors.grey, thickness: 1, height: 32),
 
           // 입력 정보 섹션
+          Text("*필수항목", style: TextStyle(color: Colors.red),),
           _buildAlignedInputRow(context, [
             _buildDropdownInput('나이', [
               '청소년', '20대 초반', '20대 후반 ~ 30대 초반', '30대 후반 ~ 40대', '50대 이상', '밝히고 싶지 않음'
             ], (value) {
               setState(() {
-                _ageGroup = value ?? '';
+                _age = value ?? '';
               });
             }),
             SizedBox(width: 32),
@@ -127,7 +232,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
             SizedBox(width: 32),
             _buildTextInput('교통 수단', (value) {
               setState(() {
-                _transportation = value;
+                _transport = value;
               });
             }),
             SizedBox(width: 32),
@@ -149,14 +254,14 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                       overlayColor: Colors.blue.withOpacity(0.2),
                     ),
                     child: Slider(
-                      value: _budgetValue,
+                      value: (_budget ?? 0).toDouble(),
                       min: 0,
                       max: 300,
                       divisions: 30,
-                      label: "${_budgetValue.round()} 만원",
+                      label: "${_budget?.round() ?? 0} 만원",
                       onChanged: (newValue) {
                         setState(() {
-                          _budgetValue = newValue;
+                          _budget = newValue.round();
                         });
                       },
                     ),
@@ -179,7 +284,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
               '혼자 여행', '우정 여행', '가족 여행', '커플 여행', '기타'
             ], (value) {
               setState(() {
-                _travelerType = value ?? '';
+                _type = value ?? '';
               });
             }),
             SizedBox(width: 32),
@@ -187,7 +292,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
               '1명', '2명', '3명', '4명', '5명 이상'
             ], (value) {
               setState(() {
-                _travelerCount = value ?? '';
+                _num = value ?? '';
               });
             }),
           ]),
@@ -196,30 +301,44 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행 날짜 선택 섹션
           Row(
             children: [
-              Checkbox(value: false, onChanged: (value) {}),
+              Checkbox(value: _decideDate, onChanged: (value) {
+                setState(() {
+                  _decideDate = value ?? false;
+                  isDateSelected = _decideDate;
+                  _decideSpan = false;
+                  isSpanSelected = false;
+                });},
+              ),
               Text("여행 날짜를 확정했어요!", style: TextStyle(fontSize: 14)),
               SizedBox(width: 32),
-              Text('From', style: TextStyle(fontSize: 14)),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: _buildTextInput('YYYY/MM/DD', (value) {
-                  setState(() {
-                    _startDate = value;
-                  });
-                }),
-              ),
-              SizedBox(width: 16),
-              Text('To', style: TextStyle(fontSize: 14)),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: _buildTextInput('YYYY/MM/DD', (value) {
-                  setState(() {
-                    _endDate = value;
-                  });
-                }),
-              ),
+              Visibility(
+                visible: isDateSelected,
+                child: Row(
+                  children: [
+                    Text('From', style: TextStyle(fontSize: 14)),
+                    SizedBox(width: 16),
+                    SizedBox(
+                      width: 150,
+                      child: _buildTextInput('YYYY/MM/DD', (value) {
+                        setState(() {
+                          _dateStart = DateFormat('yyyy/MM/dd').parse(value);
+                        });
+                      }),
+                    ),
+                    SizedBox(width: 16),
+                    Text('To', style: TextStyle(fontSize: 14)),
+                    SizedBox(width: 16),
+                    SizedBox(
+                      width: 150,
+                      child: _buildTextInput('YYYY/MM/DD', (value) {
+                        setState(() {
+                          _dateEnd = DateFormat('yyyy/MM/dd').parse(value);
+                        });
+                      }),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
           Divider(color: Colors.grey, thickness: 1, height: 32),
@@ -227,54 +346,68 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행 기간 선택 섹션
           Row(
             children: [
-              Checkbox(value: false, onChanged: (value) {}),
+              Checkbox(value: _decideSpan, onChanged: (value) {
+                setState(() {
+                  _decideSpan = value ?? false;
+                  isSpanSelected = _decideSpan;
+                  _decideDate = false;
+                  isDateSelected = false;
+                });},
+              ),
               Text(
                 '여행 기간만 확정했어요!',
                 style: TextStyle(fontSize: 14),
               ),
               SizedBox(width: 32),
-              Text(' 대략', style: TextStyle(fontSize: 14)),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: _buildDropdownInput('이때쯤', [
-                  '1월', '2월', '3월', '4월', '5월', '6월',
-                  '7월', '8월', '9월', '10월', '11월', '12월'
-                ], (value) {
-                  setState(() {
-                    _approximateMonth = value ?? '';
-                  });
-                }),
-              ),
-              SizedBox(width: 16),
-              Text(', 여행 기간은', style: TextStyle(fontSize: 14)),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: _buildDropdownInput('Months', List.generate(7, (index) => '$index'), (value) {
-                  setState(() {
-                    _approximateMonths = value ?? '0';
-                  });
-                }),
-              ),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: _buildDropdownInput('Weeks', List.generate(7, (index) => '$index'), (value) {
-                  setState(() {
-                    _approximateWeeks = value ?? '0';
-                  });
-                }),
-              ),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: _buildDropdownInput('Days', List.generate(7, (index) => '$index'), (value) {
-                  setState(() {
-                    _approximateDays = value ?? '0';
-                  });
-                }),
-              ),
+              Visibility(
+                visible: isSpanSelected,
+                child: Row(
+                  children: [
+                    Text(' 대략', style: TextStyle(fontSize: 14)),
+                    SizedBox(width: 16),
+                    SizedBox(
+                      width: 150,
+                      child: _buildDropdownInput('이때쯤', [
+                        '1월', '2월', '3월', '4월', '5월', '6월',
+                        '7월', '8월', '9월', '10월', '11월', '12월'
+                      ], (value) {
+                        setState(() {
+                          _spanApprox = value ?? '';
+                        });
+                      }),
+                    ),
+                    SizedBox(width: 16),
+                    Text(', 여행 기간은', style: TextStyle(fontSize: 14)),
+                    SizedBox(width: 16),
+                    SizedBox(
+                      width: 150,
+                      child: _buildDropdownInput('Months', List.generate(7, (index) => '$index'), (value) {
+                        setState(() {
+                          _spanMonth = (value as int?) ?? 0;
+                        });
+                      }),
+                    ),
+                    SizedBox(width: 16),
+                    SizedBox(
+                      width: 150,
+                      child: _buildDropdownInput('Weeks', List.generate(7, (index) => '$index'), (value) {
+                        setState(() {
+                          _spanWeek = (value as int?) ?? 0;
+                        });
+                      }),
+                    ),
+                    SizedBox(width: 16),
+                    SizedBox(
+                      width: 150,
+                      child: _buildDropdownInput('Days', List.generate(7, (index) => '$index'), (value) {
+                        setState(() {
+                          _spanDay = (value as int?) ?? 0;
+                        });
+                      }),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
 
@@ -283,11 +416,20 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DetailInputScreen()),
-                  );
+                onPressed: () async {
+                  if (isAllSelected()) {
+                    await _sendDataToApi(); // 데이터 전송이 완료될 때까지 기다림
+                    if (_infoId != null) { // _infoId가 null이 아니면 화면 전환
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DetailInputScreen(infoId: _infoId!)),
+                      );
+                    } else {
+                      print('Info_ID is null, cannot navigate.');
+                    }
+                  } else {
+                    showMissingFieldsSnackBar(); // 필수 항목이 안 채워졌으면 SnackBar를 표시
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,

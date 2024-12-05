@@ -33,7 +33,7 @@ class Login extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/travel_mate.png',
+                      'assets/images/Travel_Mate.png',
                       height: 70,
                       width: 250,
                       fit: BoxFit.contain,

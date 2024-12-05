@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:travelmate/page/info.dart';
 
 
 class ChatDrawer extends StatefulWidget {
@@ -22,21 +23,27 @@ class _ChatDrawerState extends State<ChatDrawer> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-              ),
-              borderRadius: BorderRadius.circular(30)
+                border: Border.all(
+                  color: Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(30)
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.edit_location_outlined),
-                Text("내 목록 수정하기", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),)
+                Text("내 목록 수정하기",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                  ),
+                )
               ],
             ),
           ),
-          SizedBox(height: 50,),
-          
+          SizedBox(height: 30,),
+
           Container(
             margin: EdgeInsets.only(bottom: 20),
             child: Column(
@@ -78,23 +85,39 @@ class _ChatDrawerState extends State<ChatDrawer> {
 
           Spacer(),
 
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            decoration: BoxDecoration(
-              color: Color(0xFFCEE0EE),
-              border: Border.all(
-                color: Colors.black,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFFCEE0EE), // Replace 'primary' with 'backgroundColor'
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+                side: BorderSide(color: Colors.black), // Button border
               ),
-              borderRadius: BorderRadius.circular(30)
             ),
+            onPressed: () {
+              // Navigate to SelectInputScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SelectInputScreen()), // Navigate to info.dart
+              );
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.add),
-                Text("새 계획 만들기", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),)
+                SizedBox(width: 8),
+                Text(
+                  "새 계획 만들기",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15
+                  ),
+                ),
               ],
             ),
           ),
+
           SizedBox(height: 20,)
         ],
       ),
