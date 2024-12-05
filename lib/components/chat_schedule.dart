@@ -284,6 +284,8 @@ class PrepareContent extends StatefulWidget {
 }
 
 class _PrepareContentState extends State<PrepareContent> {
+  final GlobalKey _globalKey = GlobalKey();
+
   String rawText = '''
   ### 준비물 추천.
   1. **여권 및 여행 관련 서류**: 해외 여행을 하기 위해 필수입니다.
@@ -316,6 +318,8 @@ class _PrepareContentState extends State<PrepareContent> {
 
     return items;
   }
+
+
 
 
   @override

@@ -95,10 +95,20 @@ class _ChatScreenState extends State<ChatScreen> {
                       if (sender == 'system') ...[
                         Padding(
                           padding: const EdgeInsets.only(left: 30.0),
-                          child: CircleAvatar(
-                            backgroundImage:
-                            AssetImage('assets/images/챗봇프사.png'),
-                            radius: 20,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle, // 동그라미 모양
+                              color: Colors.white, // 배경 색상
+                              border: Border.all(
+                                color: Colors.black, // 테두리 색상
+                                width: 0.5, // 테두리 두께
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundImage: AssetImage('assets/images/챗프사4.png'),
+                              radius: 20, // CircleAvatar의 반지름
+                              backgroundColor: Colors.transparent, // CircleAvatar의 배경 투명화
+                            ),
                           ),
                         ),
                         SizedBox(width: 5),
@@ -116,9 +126,15 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ? Color(0xFF689ADB)
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Color(0xFF627A98),
-                              ),
+                              border: Border.all(color: Color(0xFF627A98),),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1), // 부드러운 그림자
+                                  spreadRadius: 1.5, // 확산 정도
+                                  blurRadius: 3, // 흐림 정도
+                                  offset: Offset(1,2), // 약간 오른쪽 아래로 그림자
+                                ),
+                              ],
                             ),
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
@@ -141,7 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             SizedBox(height: 15), // 채팅 간격
                           ],
                           if (sender == 'system') ...[
-                            Container(
+                            /*Container(
                               padding: EdgeInsets.symmetric(vertical: 3),
                               margin: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                               height: 25,
@@ -167,7 +183,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ],
                                 ),
                               ),
-                            ),
+                            ),*/
                             SizedBox(height: 15), // 채팅 간격
                           ],
                         ],
