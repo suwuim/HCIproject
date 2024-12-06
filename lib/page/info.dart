@@ -42,7 +42,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
     final headers = {'Content-Type': 'application/json'};
 
     final body = json.encode({
-      'user_id': _userId ?? 1,
+      'user_id': _userId ?? 6,
       'age': _age,
       'gender': _gender,
       'transport': _transport,  //null OK
@@ -127,7 +127,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   void showMissingFieldsSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('필수 항목을 다 입력해주세요. $_decideSpan, $_spanDay, $_spanWeek, $_spanMonth, $_spanApprox'),
+        content: Text('필수 항목을 다 입력해주세요.'),
         duration: Duration(seconds: 2),
       ),
     );
