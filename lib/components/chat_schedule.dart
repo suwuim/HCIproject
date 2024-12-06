@@ -120,15 +120,15 @@ class _ChatScheduleState extends State<ChatSchedule> {
 
 
 
-    return Stack(
-      children: [
-        Container(color: Color(0xFFDBE7ED),),
+    return RepaintBoundary(
+      key: captureKey,
+      child: Stack(
+        children: [
+          Container(color: Color(0xFFDBE7ED),),
 
 
-        //스케줄 전체박스
-        RepaintBoundary(
-          key: captureKey,
-          child: Container(
+          //스케줄 전체박스
+          Container(
             margin: EdgeInsets.only(left: 30, right: 270, top: 30, bottom: 30),
             child: Column(
               children: [
@@ -204,51 +204,51 @@ class _ChatScheduleState extends State<ChatSchedule> {
               ],
             ),
           ),
-        ),
-        if (showFirstContent)
-          Container(
-            margin: EdgeInsets.only(top: 120),
-            child: ScheduleWidget()),
+          if (showFirstContent)
+            Container(
+              margin: EdgeInsets.only(top: 120),
+              child: ScheduleWidget()),
 
 
-        //다운, 공유 버튼
-        Padding(
-          padding: const EdgeInsets.only(top: 30, right: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              InkWell(
-                onTap: () async {
-                  await captureAndDownloadWidget(captureKey);
-                },
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Color(0xFF28466A),
-                      width: 2,
-                    ),
-                  ),
-                  child: Icon(Icons.download, color: Colors.black, size: 25,),
-                ),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    _showConsentDialog(context);
+          //다운, 공유 버튼
+          Padding(
+            padding: const EdgeInsets.only(top: 30, right: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    await captureAndDownloadWidget(captureKey);
                   },
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color(0xFF28466A),
-                      minimumSize: Size(20,42)
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Color(0xFF28466A),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(Icons.download, color: Colors.black, size: 25,),
                   ),
-                  child: Text("공유하기", style: TextStyle(fontSize: 15),))
-            ],
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      _showConsentDialog(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Color(0xFF28466A),
+                        minimumSize: Size(20,42)
+                    ),
+                    child: Text("공유하기", style: TextStyle(fontSize: 15),))
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -325,14 +325,25 @@ class PrepareContent extends StatefulWidget {
 }
 
 class _PrepareContentState extends State<PrepareContent> {
+
   List<Map<String, String>> parsePreparationItems(String input) {
     final items = <Map<String, String>>[];
 
-    // '### 준비물' 이후의 텍스트 추출
+    // '###준비물' 또는 '### 준비물' 이후의 텍스트 추출
     final preparationStart = input.indexOf('###준비물');
-    if (preparationStart == -1) return items; // 준비물이 없으면 빈 리스트 반환
+    final preparationStartWithSpace = input.indexOf('### 준비물');
 
-    final preparationText = input.substring(preparationStart).split('\n').skip(1).toList();
+    if (preparationStart == -1 && preparationStartWithSpace == -1) return items; // 둘 다 없으면 빈 리스트 반환
+
+    int startIndex = -1;
+
+    if (preparationStart != -1) startIndex = preparationStart;
+    if (preparationStartWithSpace != -1 &&
+        (startIndex == -1 || preparationStartWithSpace < startIndex)) {
+      startIndex = preparationStartWithSpace;
+    }
+
+    final preparationText = input.substring(startIndex).split('\n').skip(1).toList();
 
     for (final line in preparationText) {
       final match = RegExp(r'\*\*(.*?)\*\*: (.*)').firstMatch(line);

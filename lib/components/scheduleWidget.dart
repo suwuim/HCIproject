@@ -67,6 +67,8 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     String? currentDay;
     String? dayTime, answer, transport, number, tip;
 
+    final List<String> transportKeywords = ['택시', '도보', '자동차', '지하철', '버스'];
+
     for (String line in lines) {
       line = line.trim();
       if (line.isEmpty) continue;
@@ -77,20 +79,34 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
         if (!schedules.containsKey(currentDay)) {
           schedules[currentDay] = [];
         }
+
       } else if (line.startsWith("**")) {
         // Time과 활동 정보 추출
         int startIdx = line.indexOf("**") + 2;
         int endIdx = line.lastIndexOf("**");
         dayTime = line.substring(startIdx, endIdx).trim();
         answer = line.substring(endIdx + 2).trim();
+
       } else if (line.startsWith("↓")) {
-        // 이동 정보 추출
-        List<String> parts = line.substring(1).split(' ');
-        transport = parts[0].trim();
-        number = parts.length > 1 ? parts[1].trim() : null;
+        String transportLine = line.substring(1).trim();
+
+        // transportLine 내 이동수단 키워드가 포함되어 있는지 확인
+        transport = transportKeywords.firstWhere(
+              (keyword) => transportLine.contains(keyword),
+          orElse: () => '',
+        );
+
+        if (transport.isNotEmpty) {
+          List<String> parts = transportLine.split(' ');
+          number = parts.length > 1 ? parts[1].trim() : null;
+        } else {
+          transport = null;
+        }
+
       } else if (line.startsWith("(팁:")) {
         // 팁 추출
         tip = line.replaceAll("(팁:", "").replaceAll(")", "").trim();
+
       } else if (line.startsWith("---------------------------------------------------------")) {
         // 항목 저장
         if (currentDay != null && dayTime != null && answer != null) {
