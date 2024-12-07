@@ -71,21 +71,18 @@ class TravelerPickPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TravelCard(
-                      pickId: 6,
                       country: '대한민국, 서울',
                       date: '2024.10',
                       duration: '4박 5일',
                       imageUrl: 'assets/images/전체픽1.png',
                     ),
                     TravelCard(
-                      pickId: 7,
                       country: '일본, 오사카',
                       date: '2024.09',
                       duration: '7박 8일',
                       imageUrl: 'assets/images/전체픽2.png',
                     ),
                     TravelCard(
-                      pickId: 8,
                       country: '터키, 이스탄불',
                       date: '2024.05',
                       duration: '2주',
@@ -99,21 +96,18 @@ class TravelerPickPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TravelCard(
-                      pickId: 9,
                       country: '필리핀, 보라카이',
                       date: '2023.11',
                       duration: '5박 6일',
                       imageUrl: 'assets/images/전체픽4.png',
                     ),
                     TravelCard(
-                      pickId: 10,
                       country: '미국, 뉴욕',
                       date: '2023.06',
                       duration: '1주',
                       imageUrl: 'assets/images/전체픽5.png',
                     ),
                     TravelCard(
-                      pickId: 11,
                       country: '호주, 시드니',
                       date: '2023.02',
                       duration: '4주',
@@ -127,21 +121,18 @@ class TravelerPickPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TravelCard(
-                      pickId: 12,
                       country: '짤츠부르크, 오스트리아',
                       date: '2024.10',
                       duration: '4박 5일',
                       imageUrl: 'assets/images/잘츠부르크.png',
                     ),
                     TravelCard(
-                      pickId: 13,
                       country: '바르셀로나, 스페인',
                       date: '2024.09',
                       duration: '7박 8일',
                       imageUrl: 'assets/images/바르셀로나.png',
                     ),
                     TravelCard(
-                      pickId: 14,
                       country: '가오슝, 대만',
                       date: '2024.05',
                       duration: '2주',
@@ -155,21 +146,18 @@ class TravelerPickPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TravelCard(
-                      pickId: 15,
                       country: '울란바토르, 몽골',
                       date: '2023.11',
                       duration: '5박 6일',
                       imageUrl: 'assets/images/전체픽3.png',
                     ),
                     TravelCard(
-                      pickId: 16,
                       country: '오사카, 일본',
                       date: '2023.06',
                       duration: '1주',
                       imageUrl: 'assets/images/전체픽1.png',
                     ),
                     TravelCard(
-                      pickId: 17,
                       country: '파리, 프랑스',
                       date: '2023.02',
                       duration: '4주',
@@ -198,8 +186,6 @@ class TravelCard extends StatelessWidget {
   final String date;
   final String duration;
   final String imageUrl;
-  final int pickId;
-
 
   const TravelCard({
     Key? key,
@@ -207,7 +193,6 @@ class TravelCard extends StatelessWidget {
     required this.date,
     required this.duration,
     required this.imageUrl,
-    required this.pickId,
   }) : super(key: key);
 
   @override
@@ -217,7 +202,7 @@ class TravelCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PersonalPickPage(pickId: pickId,),
+            builder: (context) => PersonalPickPage(),
           ),
         );
       },

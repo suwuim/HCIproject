@@ -88,11 +88,11 @@ class _TravelPickSectionState extends State<TravelPickSection> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      TravelPickCard(pickId: 1, img: 'assets/images/잘츠부르크.png', title: '오스트리아 잘츠부르크', hashtag: '#자연, #가족여행 #5박 6일', description: pickDesciption1),
-                      TravelPickCard(pickId: 2, img: 'assets/images/바르셀로나.png', title: '스페인 바르셀로나', hashtag: '#힐링, #신혼여행 #4박 5일', description: pickDesciption2),
-                      TravelPickCard(pickId: 3, img: 'assets/images/가오슝.png', title: '대만 가오슝', hashtag: '#액티비티, #우정여행 #1주일', description: pickDesciption3),
-                      TravelPickCard(pickId: 4, img: 'assets/images/샌프란시스코.png', title: '미국 샌프란시스코', hashtag: '#힐링, #가족여행 #1달', description: pickDesciption4),
-                      TravelPickCard(pickId: 5, img: 'assets/images/울란바토르.png', title: '몽골 울란바토르', hashtag: '#문화탐방, #가족여행 #5박 6일', description: pickDesciption5),
+                      TravelPickCard(img: 'assets/images/잘츠부르크.png', title: '오스트리아 잘츠부르크', hashtag: '#자연, #가족여행 #5박 6일', description: pickDesciption1),
+                      TravelPickCard(img: 'assets/images/바르셀로나.png', title: '스페인 바르셀로나', hashtag: '#힐링, #신혼여행 #4박 5일', description: pickDesciption2),
+                      TravelPickCard(img: 'assets/images/가오슝.png', title: '대만 가오슝', hashtag: '#액티비티, #우정여행 #1주일', description: pickDesciption3),
+                      TravelPickCard(img: 'assets/images/샌프란시스코.png', title: '미국 샌프란시스코', hashtag: '#힐링, #가족여행 #1달', description: pickDesciption4),
+                      TravelPickCard(img: 'assets/images/울란바토르.png', title: '몽골 울란바토르', hashtag: '#문화탐방, #가족여행 #5박 6일', description: pickDesciption5),
                     ],
                   ),
                 ),
@@ -117,14 +117,12 @@ class TravelPickCard extends StatefulWidget {
   final String title;
   final String hashtag;
   final String description;
-  final int pickId;
 
   const TravelPickCard({
     required this.img,
     required this.title,
     required this.hashtag,
     required this.description,
-    required this.pickId,
   });
 
   @override
@@ -154,7 +152,7 @@ class _TravelPickCardState extends State<TravelPickCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PersonalPickPage(pickId: widget.pickId,),
+            builder: (context) => PersonalPickPage(),
           ),
         );
       },
