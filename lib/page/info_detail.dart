@@ -3,89 +3,21 @@ import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:travelmate/sessionProvider.dart';
-import 'package:travelmate/userProvider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class DetailInputScreen extends StatefulWidget {
-  int? infoId;
-  DetailInputScreen({required this.infoId});
-
   @override
   _DetailInputScreenState createState() => _DetailInputScreenState();
 }
 
 class _DetailInputScreenState extends State<DetailInputScreen> {
   static const double containerWidth = 0.9;
-  int? _userId;
-  int? _sessionId;
-
-  @override
-  void initState() {
-    super.initState();
-    _userId = Provider.of<UserProvider>(context, listen: false).userId;
-    print('기본정보->디테일정보 Info_ID: ${widget.infoId}');
-  }
-
-  Future<void> _sendDetail() async {
-    final url = Uri.parse('http://127.0.0.1:5000/infodetail');
-    final headers = {'Content-Type': 'application/json'};
-
-    final body = json.encode({
-      'info_id' : widget.infoId,
-      'detail_purpose' : _detailPurpose,
-      'interest' : _interest,
-      'special_place' : _specialPlace,
-      'religion': _religion,
-      'consideration' : _consideration,
-    });
-
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 201) {
-        print('디테일정보 보내기 성공 Info_ID: ${widget.infoId}');
-      } else {
-        print('Failed to send info detail: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> _createSession() async {
-    final url = Uri.parse('http://127.0.0.1:5000/sesh/session');
-    final headers = {'Content-Type': 'application/json'};
-
-
-    final body = json.encode({
-      'user_id' : _userId,
-      'info_id' : widget.infoId,
-    });
-
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 201) {
-        print('Session 만들기 성공 infoId: ${widget.infoId}');
-
-        final responseData = json.decode(response.body);
-        _sessionId = responseData['session_id'];
-        Provider.of<SessionProvider>(context, listen: false).setSessionId(_sessionId);
-        print('Session ID: ${_sessionId}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   // String 변수로 각 입력값을 저장
-  String _detailPurpose = '';
-  String _interest = '';
+  String _purpose = '';
+  String _hobby = '';
   String _specialPlace = '';
   String _religion = '';
-  String _consideration = '';
+  String _additionalNotes = '';
 
   @override
   Widget build(BuildContext context) {
@@ -170,13 +102,13 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                   children: [
                     _buildTextInput('여행의 목적을 더 상세히 써주세요!', (value) {
                       setState(() {
-                        _detailPurpose = value;
+                        _purpose = value;
                       });
                     }),
                     SizedBox(height: 22),
                     _buildTextInput('취미 또는 관심사가 무엇인가요?', (value) {
                       setState(() {
-                        _interest = value;
+                        _hobby = value;
                       });
                     }),
                     SizedBox(height: 22),
@@ -200,7 +132,7 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                     SizedBox(height: 16),
                     _buildLargeTextInput('이 외에 고려사항이 있다면 작성해주세요!', (value) {
                       setState(() {
-                        _consideration = value;
+                        _additionalNotes = value;
                       });
                     }),
                   ],
@@ -224,13 +156,10 @@ class _DetailInputScreenState extends State<DetailInputScreen> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: () async {
-                    await _sendDetail();
-                    await _createSession();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatbotPage()),
-                    );},
+                  onPressed: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatbotPage()),
+                  );},
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.white, minimumSize: Size(120, 50)),
                   child: Text("Let's Go!", style: TextStyle(fontSize: 18, color: AppColors.GreyBlue)),
                 ),
