@@ -134,6 +134,10 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   }
 
 
+  bool _isDestinationConfirmed = false;
+  bool _isDateConfirmed = false;
+  bool _isDurationConfirmed = false;
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -206,7 +210,10 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
               ),
               Text(
                 "여행지를 결정했나요?",
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: _isDestinationConfirmed ? Colors.blue : Colors.black,
+                ),
               ),
               SizedBox(width: 32),
               Visibility(
@@ -313,6 +320,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
           // 여행 날짜 선택 섹션
           Row(
             children: [
+                                                                                              
               Checkbox(value: _decideDate, onChanged: (value) {
                 setState(() {
                   _decideDate = value ?? false;
@@ -322,6 +330,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                 });},
               ),
               Text("여행 날짜를 확정했어요!", style: TextStyle(fontSize: 14)),
+
               SizedBox(width: 32),
               Visibility(
                 visible: isDateSelected || _decideDate == true,
@@ -367,8 +376,11 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                 });},
               ),
               Text(
-                '여행 기간만 확정했어요!',
-                style: TextStyle(fontSize: 14),
+                "여행 기간만 확정했어요!",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: _isDurationConfirmed ? Colors.blue : Colors.black,
+                ),
               ),
               SizedBox(width: 32),
               Visibility(
