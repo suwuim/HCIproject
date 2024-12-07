@@ -4,6 +4,7 @@ import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/info.dart';
+import 'package:travelmate/page/login_page.dart';
 import 'package:travelmate/page/map.dart';
 import 'package:provider/provider.dart';
 import 'package:travelmate/userProvider.dart';
@@ -119,10 +120,36 @@ class _HomePageState extends State<HomePage> {
                                     backgroundColor: Colors.white,
                                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                                   ),
-                                  onPressed: () {Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => ChatbotPage()),
-                                  );},
+                                  onPressed: () {
+                                    if (_userId == null) {
+                                      // 로그인하지 않은 경우 알림 다이얼로그 표시
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text('로그인이 필요합니다'),
+                                          content: Text('로그인 후에 나의 여행지 기능을 사용할 수 있습니다.'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context); // 다이얼로그 닫기
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => LoginPage()),
+                                                );
+                                              },
+                                              child: Text('로그인하러 가기'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      // 로그인한 경우 ChatbotPage로 이동
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => ChatbotPage()),
+                                      );
+                                    }
+                                  },
                                   child: Text('나의 여행지', style: TextStyle(fontSize: 20)),
                                 ),
                               ],
