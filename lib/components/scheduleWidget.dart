@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/messageProvider.dart';
+import 'package:provider/provider.dart';
 
 class ScheduleWidget extends StatefulWidget {
   @override
@@ -6,54 +8,153 @@ class ScheduleWidget extends StatefulWidget {
 }
 
 class _ScheduleWidgetState extends State<ScheduleWidget> {
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 40, top: 160, right: 20, bottom: 40),
-      child: Stack(
-        children: [
-          // 점선을 그리는 CustomPainter
-          Positioned.fill(
-            child: CustomPaint(
-              painter: DottedLinePainter(),
-            ),
-          ),
+    final messages = Provider.of<MessageProvider>(context).getLatestContentBySubstring('### 1일차');
 
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "버스", number: "100", tip: '아호아ㅘㅇ린러나러이너ㅏㅓ리ㅇㄴㄹㄴㄹㄴㄹㄴㄹㅇㄴㄹㄴㄹㅇㄴㄹㅇㄹㄴㄹㄴㅇㄹㄴㄹㄴㅇㄹㄴㅇㄹㄹㅇㅎㅇㅎㅇㅎㅇㅎㅎㅇㅎㄹㅇㅎㅇㅀㅇㅀㅇㅀㄹㅇㅎㄹㅇㅎㅇㅀㅇㅎㄹㅇㅎㅇㅎㅇㅀㅇㅀ',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "택시", number: '', tip: '',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-                AnswerList(dayTime: "오전", time: "9:00", answer: "현지 카페에서 아침식사 (예산 친화적인 옵션)", transport: "도보", number: '', tip: 'dsffsfd',),
-              ],
+    if (messages.isNotEmpty) {
+      final Map<String, List<AnswerList>> parsedSchedules = parseSchedule(messages);
+
+      return Container(
+        margin: EdgeInsets.only(left: 40, top: 40, right: 20, bottom: 40),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: DottedLinePainter(),
+              ),
             ),
-          )
-        ],
-      ),
-    );
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: parsedSchedules.keys.map((dayNum) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                            color: Color(0xFFDBE7ED),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Text(dayNum, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      ),
+                      ...parsedSchedules[dayNum]!.map((schedule) => schedule).toList(),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // 메시지가 존재하지 않을 때 출력되는 위젋
+      return Container(
+        margin: EdgeInsets.only(top: 280, left: 150),
+        child: Text(
+          "아직 일정이 비어있습니다. \n챗봇에게 일정을 짜달라고 해보세요! 🗓️",
+          style: TextStyle(fontSize: 16,),
+        ),
+      );
+    }
+  }
+
+  Map<String, List<AnswerList>> parseSchedule(String text) {
+    final Map<String, List<AnswerList>> schedules = {};
+    List<String> lines = text.split('\n');
+    String? currentDay;
+    String? dayTime, answer, transport, number, tip;
+
+    final List<String> transportKeywords = ['택시', '도보', '자동차', '지하철', '버스'];
+
+    for (String line in lines) {
+      line = line.trim();
+      if (line.isEmpty) continue;
+
+      if (line.startsWith("###")) {
+        // 새로운 일차 시작
+        currentDay = line.replaceAll("###", "").trim();
+        if (!schedules.containsKey(currentDay)) {
+          schedules[currentDay] = [];
+        }
+
+      } else if (line.startsWith("**")) {
+        // Time과 활동 정보 추출
+        int startIdx = line.indexOf("**") + 2;
+        int endIdx = line.lastIndexOf("**");
+        dayTime = line.substring(startIdx, endIdx).trim();
+        answer = line.substring(endIdx + 2).trim();
+
+      } else if (line.startsWith("↓")) {
+        String transportLine = line.substring(1).trim();
+
+        // transportLine 내 이동수단 키워드가 포함되어 있는지 확인
+        transport = transportKeywords.firstWhere(
+              (keyword) => transportLine.contains(keyword),
+          orElse: () => '',
+        );
+
+        if (transport.isNotEmpty) {
+          List<String> parts = transportLine.split(' ');
+          number = null;
+        } else {
+          transport = null;
+        }
+
+      } else if (line.startsWith("(팁:")) {
+        // 팁 추출
+        tip = line.replaceAll("(팁:", "").replaceAll(")", "").trim();
+
+      } else if (line.startsWith("---------------------------------------------------------")) {
+        // 항목 저장
+        if (currentDay != null && dayTime != null && answer != null) {
+          schedules[currentDay]!.add(AnswerList(
+            dayNum: null,
+            dayTime: dayTime,
+            answer: answer,
+            transport: transport,
+            number: number,
+            tip: tip,
+          ));
+          dayTime = null;
+          answer = null;
+          transport = null;
+          number = null;
+          tip = null;
+        }
+      }
+    }
+
+    // 마지막 항목 저장
+    if (currentDay != null && dayTime != null && answer != null) {
+      schedules[currentDay]!.add(AnswerList(
+        dayNum: null,
+        dayTime: dayTime,
+        answer: answer,
+        transport: transport,
+        number: number,
+        tip: tip,
+      ));
+    }
+
+    return schedules;
   }
 }
 
 
 class AnswerList extends StatefulWidget {
+  String? dayNum;
   String dayTime;
-  String time;
   String answer;
   String? transport;
   String? number;
   String? tip;
 
   AnswerList({
+    required this.dayNum,
     required this.dayTime,
-    required this.time,
     required this.answer,
     required this.transport,
     required this.number,
@@ -78,7 +179,7 @@ class _AnswerListState extends State<AnswerList> {
             children: [
               Text("${widget.number}", style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold)),
               SizedBox(width: 5),
-              Image.asset('assets/images/버스.png'),
+              Image.asset('assets/images/버스1.png', scale: 5),
             ],
           );
         } else {
@@ -87,14 +188,20 @@ class _AnswerListState extends State<AnswerList> {
         break;
       case '택시':
         transportationInfo = Padding(
-          padding: const EdgeInsets.only(left: 25),
-          child: Image.asset('assets/images/택시.png'),
+          padding: const EdgeInsets.only(left: 28),
+          child: Image.asset('assets/images/택시1.png', scale: 5,),
+        );
+        break;
+      case '지하철':
+        transportationInfo = Padding(
+          padding: const EdgeInsets.only(left: 26),
+          child: Image.asset('assets/images/지하철.png', scale: 3.5,),
         );
         break;
       case '도보':
         transportationInfo = Padding(
-          padding: const EdgeInsets.only(left: 25),
-          child: Image.asset('assets/images/도보.png'),
+          padding: const EdgeInsets.only(left: 27),
+          child: Image.asset('assets/images/도보1.png', scale: 4,),
         );
         break;
       default:
@@ -113,12 +220,23 @@ class _AnswerListState extends State<AnswerList> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (widget.dayNum != null && widget.dayNum!.isNotEmpty)
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        color: Color(0xFFDBE7ED),
+                        borderRadius: BorderRadius.circular(8)
+                    ),
+                    child: Text(widget.dayNum.toString(), style: TextStyle(fontWeight: FontWeight.bold),),
+                  ),
+
                 Row(
                   children: [
                     SizedBox(width: 30,),
                     Image.asset("assets/images/플랜포인트.png"),
                     SizedBox(width: 5,),
-                    Text("${widget.dayTime} ${widget.time}", style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.bold),),
+                    Text("${widget.dayTime}", style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.bold),),
                     SizedBox(width: 15,),
                     Expanded(child: Container( child: Text(widget.answer, style: TextStyle(fontSize: 13, color: Colors.black), softWrap: true,))),
                     SizedBox(width: 5,)

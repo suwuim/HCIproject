@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:travelmate/components/scheduleWidget.dart';
 import 'package:travelmate/design/color_system.dart';
+import 'package:travelmate/messageProvider.dart';
+import 'package:provider/provider.dart';
+
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:flutter/rendering.dart';
+import 'dart:html' as html;
+
+
+
+GlobalKey captureKey = GlobalKey();
 
 class ChatSchedule extends StatefulWidget {
   @override
@@ -82,130 +93,162 @@ class _ChatScheduleState extends State<ChatSchedule> {
       );
     }
 
+    Future<void> captureAndDownloadWidget(GlobalKey key) async {
+      try {
+        RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        ui.Image image = await boundary.toImage(pixelRatio: 3.0);
 
-    return Stack(
-      children: [
-        Container(color: Color(0xFFDBE7ED),),
+        // 이미지 바이트 변환
+        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+        // Blob 및 다운로드 링크 생성
+        final blob = html.Blob([pngBytes]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..target = "blank"
+          ..download = "schedule.png";
+
+        // 클릭 이벤트 트리거
+        anchor.click();
+
+        html.Url.revokeObjectUrl(url);  // URL 리소스 정리
+      } catch (e) {
+        print(e);
+      }
+    }
 
 
-        //스케줄 전체박스
-        Container(
-          margin: EdgeInsets.only(left: 30, right: 270, top: 30, bottom: 30),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        showFirstContent = true;
-                      });
-                    },
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: showFirstContent ? AppColors.DarkBlue : Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
-                          ),
-                          border: Border.all(
-                            color: AppColors.DarkBlue
-                          ),
-                        ),
-                        child: Text(
-                          "플래너",
-                          style: TextStyle(
-                            color: showFirstContent ? Colors.white : AppColors.DarkBlue,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        showFirstContent = false;
-                      });
-                    },
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: showFirstContent ? Colors.white : AppColors.DarkBlue,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
-                          ),
-                          border: Border.all(
-                              color: AppColors.DarkBlue
-                          ),
-                        ),
-                        child: Text(
-                          "준비물",
-                          style: TextStyle(
+
+    return RepaintBoundary(
+      key: captureKey,
+      child: Stack(
+        children: [
+          Container(color: Color(0xFFDBE7ED),),
+
+
+          //스케줄 전체박스
+          Container(
+            margin: EdgeInsets.only(left: 30, right: 270, top: 30, bottom: 30),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          showFirstContent = true;
+                        });
+                      },
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          decoration: BoxDecoration(
                             color: showFirstContent ? AppColors.DarkBlue : Colors.white,
-                            fontSize: 16,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                            border: Border.all(
+                                color: AppColors.DarkBlue
+                            ),
+                          ),
+                          child: Text(
+                            "플래너",
+                            style: TextStyle(
+                              color: showFirstContent ? Colors.white : AppColors.DarkBlue,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: showFirstContent
-                    ? PlanContent(country: "퀸스타운",) : PrepareContent(),
-              ),
-            ],
-          ),
-        ),
-        if (showFirstContent)
-        ScheduleWidget(),
-
-
-        //다운, 공유 버튼
-        Padding(
-          padding: const EdgeInsets.only(top: 30, right: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              InkWell(
-                onTap: (){
-
-                },
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Color(0xFF28466A),
-                      width: 2,
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          showFirstContent = false;
+                        });
+                      },
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: showFirstContent ? Colors.white : AppColors.DarkBlue,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                            border: Border.all(
+                                color: AppColors.DarkBlue
+                            ),
+                          ),
+                          child: Text(
+                            "준비물",
+                            style: TextStyle(
+                              color: showFirstContent ? AppColors.DarkBlue : Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Icon(Icons.download, color: Colors.black, size: 25,),
+                  ],
                 ),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    _showConsentDialog(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color(0xFF28466A),
-                      minimumSize: Size(20,42)
-                  ),
-                  child: Text("공유하기", style: TextStyle(fontSize: 15),))
-            ],
+                Expanded(
+                  child: showFirstContent
+                  //여기에 나라 이름 가져오기 !
+                      ? PlanContent(country: " ",) : PrepareContent(),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          if (showFirstContent)
+            Container(
+              margin: EdgeInsets.only(top: 120),
+              child: ScheduleWidget()),
+
+
+          //다운, 공유 버튼
+          Padding(
+            padding: const EdgeInsets.only(top: 30, right: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    await captureAndDownloadWidget(captureKey);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Color(0xFF28466A),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(Icons.download, color: Colors.black, size: 25,),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      _showConsentDialog(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Color(0xFF28466A),
+                        minimumSize: Size(20,42)
+                    ),
+                    child: Text("공유하기", style: TextStyle(fontSize: 15),))
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -249,13 +292,13 @@ class _PlanContentState extends State<PlanContent> {
                       "여행일정: " + widget.country,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    Row(
+                    /*Row(
                       children: [
                         ElevatedButton(onPressed: () {}, child: Icon(Icons.undo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1)),),
                         SizedBox(width: 10,),
                         ElevatedButton(onPressed: () {}, child: Icon(Icons.redo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1),),)
                       ],
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -282,8 +325,45 @@ class PrepareContent extends StatefulWidget {
 }
 
 class _PrepareContentState extends State<PrepareContent> {
+
+  List<Map<String, String>> parsePreparationItems(String input) {
+    final items = <Map<String, String>>[];
+
+    // '###준비물' 또는 '### 준비물' 이후의 텍스트 추출
+    final preparationStart = input.indexOf('###준비물');
+    final preparationStartWithSpace = input.indexOf('### 준비물');
+
+    if (preparationStart == -1 && preparationStartWithSpace == -1) return items; // 둘 다 없으면 빈 리스트 반환
+
+    int startIndex = -1;
+
+    if (preparationStart != -1) startIndex = preparationStart;
+    if (preparationStartWithSpace != -1 &&
+        (startIndex == -1 || preparationStartWithSpace < startIndex)) {
+      startIndex = preparationStartWithSpace;
+    }
+
+    final preparationText = input.substring(startIndex).split('\n').skip(1).toList();
+
+    for (final line in preparationText) {
+      final match = RegExp(r'\*\*(.*?)\*\*: (.*)').firstMatch(line);
+      if (match != null) {
+        items.add({
+          "title": match.group(1)!,
+          "description": match.group(2)!,
+        });
+      }
+    }
+
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<String> prefixes = ['### 준비물', '###준비물'];
+    String rawText = Provider.of<MessageProvider>(context).getLatestContentByPrefix(prefixes);
+    List<Map<String, String>> preparationItems = parsePreparationItems(rawText);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -303,16 +383,16 @@ class _PrepareContentState extends State<PrepareContent> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "당신의 여행에 필요한 준비물",
+                  "여행 준비물:",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Row(
+                /*Row(
                   children: [
                     ElevatedButton(onPressed: () {}, child: Icon(Icons.undo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1)),),
                     SizedBox(width: 10,),
                     ElevatedButton(onPressed: () {}, child: Icon(Icons.redo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1)),)
                   ],
-                ),
+                ),*/
               ],
             ),
           ),
@@ -320,10 +400,92 @@ class _PrepareContentState extends State<PrepareContent> {
             padding: const EdgeInsets.only(left: 30),
             child: Image.asset("assets/images/일정데코.png"),
           ),
-          Expanded(child: Container())
+          preparationItems.isNotEmpty
+              ? PreparationList(preparationItems: preparationItems)
+              : Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 250),
+                  child: Text(
+                    "아직 준비물이 없습니다. \n챗봇에게 준비물을 알려달라고 해보세요! 📝",
+                    style: TextStyle(fontSize: 16,),
+                  ),
+                ),
+              ),
         ],
       ),
     );
   }
 }
+
+
+class PreparationList extends StatefulWidget {
+  final List<Map<String, String>> preparationItems;
+
+  PreparationList({required this.preparationItems});
+
+  @override
+  _PreparationListState createState() => _PreparationListState();
+}
+
+class _PreparationListState extends State<PreparationList> {
+  late List<bool> isCheckedList; // 체크박스 상태를 관리하는 리스트
+
+  @override
+  void initState() {
+    super.initState();
+    isCheckedList = List<bool>.filled(widget.preparationItems.length, false); // 초기 상태: 모두 체크 해제
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: ListView.builder(
+          itemCount: widget.preparationItems.length,
+          itemBuilder: (context, index) {
+            final item = widget.preparationItems[index];
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isCheckedList[index],
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCheckedList[index] = value ?? false; // 상태 업데이트
+                                });
+                              },
+                            ),
+                            Expanded(
+                              child: Text(
+                                item["title"]!,
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Text(item["description"]!),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 

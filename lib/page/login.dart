@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/page/home.dart';
 import 'login_page.dart';
 import 'signup_page.dart';
+import 'delete_acc.dart';
 import 'package:travelmate/components/navigation_menu.dart';
 import 'package:travelmate/design/color_system.dart';
 
@@ -160,15 +161,49 @@ class Login extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Text(
-                        '계정을 만들면서 로그인해주세요!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontFamily: 'Montserrat',
-                        ),
+                      padding: const EdgeInsets.only(left: 180, right: 160),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '저장을 원하시면 로그인하세요!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontFamily: 'Montserrat',
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => DeletePage()),
+                              );
+                            },
+                            child: Text(
+                              '계정삭제',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.transparent), // 기본 배경 투명
+                              foregroundColor: MaterialStateProperty.all(Colors.grey), // 텍스트 색상 고정
+                              overlayColor: MaterialStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
+                              shadowColor: MaterialStateProperty.all(Colors.transparent),
+                              minimumSize: MaterialStateProperty.all(Size(70, 30)),
+                              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              ),
+                              elevation: MaterialStateProperty.all(0),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
