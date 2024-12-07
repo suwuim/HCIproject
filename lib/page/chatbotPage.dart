@@ -20,11 +20,13 @@ class ChatbotPage extends StatefulWidget {
 
 class _ChatbotPageState extends State<ChatbotPage> {
   Future<void>? _initialization;
+  String _chatTitle = ""; // chatTitle 상태 변수 추가
   String scheduleText = ""; // 초기 스케줄 텍스트
 
   @override
   void initState() {
     super.initState();
+    _chatTitle = widget.chatTitle; // 초기화
     _initialization = _tempSetIds();
   }
 
@@ -42,13 +44,16 @@ class _ChatbotPageState extends State<ChatbotPage> {
       if (data != null) {
         Provider.of<InfoProvider>(context, listen: false).setInfoId(data['info_id']);
         Provider.of<SessionProvider>(context, listen: false).setSessionId(data['session_id']);
-        setState(() {});
-        print('Temporal Setting: ${data['info_id']}, ${data['session_id']}');
+        Provider.of<SessionProvider>(context, listen: false).setSessionTitle(data['session_title']);
+        setState(() {
+          _chatTitle = data['session_title']; // chatTitle 업데이트
+        });
+        print('Temporal Setting: ${data['info_id']}, ${data['session_id']}, ${data['session_title']}');
       }
     }
   }
 
-  Future<Map<String, int>?> _fetchIds(int userId) async {
+  Future<Map<String, dynamic>?> _fetchIds(int userId) async {
     final url = Uri.parse('http://127.0.0.1:5000/llm/ids');
     try {
       final response = await http.get(
@@ -63,6 +68,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
           return {
             'info_id': firstItem['info_id'] as int,
             'session_id': firstItem['session_id'] as int,
+            'session_title': firstItem['session_title'] as String,
           };
         }
       }
@@ -94,7 +100,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: ChatScreen(chatTitle: widget.chatTitle),
+                      child: ChatScreen(chatTitle: _chatTitle), // 업데이트된 chatTitle 전달
                     ),
                     Expanded(
                       flex: 1,

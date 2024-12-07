@@ -292,13 +292,13 @@ class _PlanContentState extends State<PlanContent> {
                       "여행일정: " + widget.country,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    Row(
+                    /*Row(
                       children: [
                         ElevatedButton(onPressed: () {}, child: Icon(Icons.undo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1)),),
                         SizedBox(width: 10,),
                         ElevatedButton(onPressed: () {}, child: Icon(Icons.redo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1),),)
                       ],
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -386,13 +386,13 @@ class _PrepareContentState extends State<PrepareContent> {
                   "여행 준비물:",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Row(
+                /*Row(
                   children: [
                     ElevatedButton(onPressed: () {}, child: Icon(Icons.undo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1)),),
                     SizedBox(width: 10,),
                     ElevatedButton(onPressed: () {}, child: Icon(Icons.redo, color: Colors.white,), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF90A2B1)),)
                   ],
-                ),
+                ),*/
               ],
             ),
           ),

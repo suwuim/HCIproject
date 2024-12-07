@@ -72,7 +72,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
                 borderRadius: BorderRadius.circular(30)
             ),
@@ -80,13 +80,7 @@ class _ChatDrawerState extends State<ChatDrawer> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.edit_location_outlined),
-                Text("내 목록 수정하기",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                  ),
-                )
+                Text("내 목록 수정하기", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),)
               ],
             ),
           ),
@@ -105,16 +99,8 @@ class _ChatDrawerState extends State<ChatDrawer> {
           SizedBox(height: 30),
 
           // "새 계획 만들기" 버튼
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFCEE0EE),
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-                side: BorderSide(color: Colors.black),
-              ),
-            ),
-            onPressed: () {
+          InkWell(
+            onTap: (){
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -122,20 +108,22 @@ class _ChatDrawerState extends State<ChatDrawer> {
                 ),
               );
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add),
-                SizedBox(width: 8),
-                Text(
-                  "새 계획 만들기",
-                  style: TextStyle(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              decoration: BoxDecoration(
+                  color: Color(0xFFCEE0EE),
+                  border: Border.all(
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
                   ),
-                ),
-              ],
+                  borderRadius: BorderRadius.circular(30)
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add),
+                  Text("새 계획 만들기", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),)
+                ],
+              ),
             ),
           ),
 
@@ -163,7 +151,7 @@ List<Widget> _buildSessionList(
         children: [
           Text(entry.key, style: TextStyle(color: Color(0xFFD5BF84))),
           ...entry.value.map((session) {
-            return GestureDetector(
+            return InkWell(
               onTap: () {
                 //re-setting info id, session id
                 Provider.of<InfoProvider>(context, listen:false).setInfoId(session['info_id']);
@@ -224,4 +212,3 @@ Map<String, List<Map<String, dynamic>>> _groupSessionByDate(List<Map<String, dyn
   }
   return groupedData;
 }
-

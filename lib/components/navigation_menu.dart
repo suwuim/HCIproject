@@ -4,6 +4,7 @@ import 'package:travelmate/page/chatbotPage.dart';
 import 'package:travelmate/page/home.dart';
 import 'package:travelmate/page/info.dart';
 import 'package:travelmate/page/login.dart';
+import 'package:travelmate/page/login_page.dart';
 import 'package:travelmate/page/map.dart';
 import 'package:travelmate/page/travelpickPage.dart';
 import 'package:provider/provider.dart';
@@ -71,10 +72,33 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                 );
               }),
               Menu('나의여행지', () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChatbotPage()),
-                );
+                if (_userId == null) {
+                  // 로그인하지 않은 경우 알림 다이얼로그 표시
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('로그인이 필요합니다'),
+                      content: Text('로그인 후에 나의 여행지 기능을 사용할 수 있습니다.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // 다이얼로그 닫기
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginPage()),
+                            );
+                          },
+                          child: Text('로그인하러 가기'),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatbotPage()),
+                  );
+                }
               }),
               Menu('여행랭킹', () {
                 Navigator.push(
