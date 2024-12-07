@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/messageProvider.dart';
+import 'package:provider/provider.dart';
 
 class ScheduleWidget extends StatefulWidget {
   @override
@@ -6,93 +8,57 @@ class ScheduleWidget extends StatefulWidget {
 }
 
 class _ScheduleWidgetState extends State<ScheduleWidget> {
-  String rawSchedule = """
-  ###1일차
-  **오전 00:00** 아키하라바라에서 쇼핑
-  (팁: 돈을 많이 들고 가세요)
-
-  ↓버스 90번 이용
-  ---------------------------------------------------------
-  **오전 03:00** 돈키호텔에서 라멘 음식점 
-
-  ↓지하철 5호선 이용
-  ---------------------------------------------------------
-  **오전 05:00** 도쿄 타워 구경
-  (팁: 카메라를 들고 가세요. 높은 곳이니 고소공포증 있는 사람들은 주의하세요) 
-  
-  ↓도보
-  ---------------------------------------------------------
-  **오전 05:00** 도쿄 타워 구경
-  (팁: 카메라를 들고 가세요. 높은 곳이니 고소공포증 있는 사람들은 주의하세요) 
-  
-  ↓택시
-  ---------------------------------------------------------
-  **오전 05:00** 도쿄 타워 구경
-  (팁: 카메라를 들고 가세요. 높은 곳이니 고소공포증 있는 사람들은 주의하세요) 
-  
-  ###2일차
-  **오전 00:00** 아키하라바라에서 쇼핑
-  (팁: 돈을 많이 들고 가세요)
-
-  ↓버스 90번 이용
-  ---------------------------------------------------------
-  **오전 03:00** 돈키호텔에서 라멘 음식점 
-
-  ↓지하철 5호선 이용
-  ---------------------------------------------------------
-  **오전 05:00** 도쿄 타워 구경
-  (팁: 카메라를 들고 가세요. 높은 곳이니 고소공포증 있는 사람들은 주의하세요) 
-  
-  ↓도보
-  ---------------------------------------------------------
-  """;
-
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, List<AnswerList>> parsedSchedules = parseSchedule(rawSchedule);
+    final messages = Provider.of<MessageProvider>(context).getLatestContentBySubstring('### 1일차');
 
+    if (messages.isNotEmpty) {
+      final Map<String, List<AnswerList>> parsedSchedules = parseSchedule(messages);
 
-    return Container(
-      margin: EdgeInsets.only(left: 40, top:40, right: 20, bottom: 40),
-      child: Stack(
-        children: [
-          // 점선을 그리는 CustomPainter
-          Positioned.fill(
-            child: CustomPaint(
-              painter: DottedLinePainter(),
+      return Container(
+        margin: EdgeInsets.only(left: 40, top: 40, right: 20, bottom: 40),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: DottedLinePainter(),
+              ),
             ),
-          ),
-
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: parsedSchedules.keys.map((dayNum) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 날짜 표시
-                    Container(
-                      margin: EdgeInsets.only(left: 20),
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                          color: Color(0xFFDBE7ED),
-                          borderRadius: BorderRadius.circular(8)
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: parsedSchedules.keys.map((dayNum) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                            color: Color(0xFFDBE7ED),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Text(dayNum, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       ),
-                      child: Text(dayNum, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    ),
-
-                    // 일정 카드 리스트
-                    ...parsedSchedules[dayNum]!.map((schedule) => schedule).toList(),
-                  ],
-                );
-              }).toList(),
+                      ...parsedSchedules[dayNum]!.map((schedule) => schedule).toList(),
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    } else {
+      // 메시지가 존재하지 않을 때 출력되는 위젋
+      return Container(
+        margin: EdgeInsets.only(top: 280, left: 150),
+        child: Text(
+          "아직 일정이 비어있습니다. \n챗봇에게 일정을 짜달라고 해보세요! 🗓️",
+          style: TextStyle(fontSize: 16,),
+        ),
+      );
+    }
   }
 
   Map<String, List<AnswerList>> parseSchedule(String text) {
@@ -100,6 +66,8 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     List<String> lines = text.split('\n');
     String? currentDay;
     String? dayTime, answer, transport, number, tip;
+
+    final List<String> transportKeywords = ['택시', '도보', '자동차', '지하철', '버스'];
 
     for (String line in lines) {
       line = line.trim();
@@ -111,20 +79,34 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
         if (!schedules.containsKey(currentDay)) {
           schedules[currentDay] = [];
         }
+
       } else if (line.startsWith("**")) {
         // Time과 활동 정보 추출
         int startIdx = line.indexOf("**") + 2;
         int endIdx = line.lastIndexOf("**");
         dayTime = line.substring(startIdx, endIdx).trim();
         answer = line.substring(endIdx + 2).trim();
+
       } else if (line.startsWith("↓")) {
-        // 이동 정보 추출
-        List<String> parts = line.substring(1).split(' ');
-        transport = parts[0].trim();
-        number = parts.length > 1 ? parts[1].trim() : null;
+        String transportLine = line.substring(1).trim();
+
+        // transportLine 내 이동수단 키워드가 포함되어 있는지 확인
+        transport = transportKeywords.firstWhere(
+              (keyword) => transportLine.contains(keyword),
+          orElse: () => '',
+        );
+
+        if (transport.isNotEmpty) {
+          List<String> parts = transportLine.split(' ');
+          number = parts.length > 1 ? parts[1].trim() : null;
+        } else {
+          transport = null;
+        }
+
       } else if (line.startsWith("(팁:")) {
         // 팁 추출
         tip = line.replaceAll("(팁:", "").replaceAll(")", "").trim();
+
       } else if (line.startsWith("---------------------------------------------------------")) {
         // 항목 저장
         if (currentDay != null && dayTime != null && answer != null) {

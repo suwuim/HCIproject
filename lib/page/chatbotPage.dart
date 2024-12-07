@@ -20,11 +20,18 @@ class ChatbotPage extends StatefulWidget {
 
 class _ChatbotPageState extends State<ChatbotPage> {
   Future<void>? _initialization;
+  String scheduleText = ""; // 초기 스케줄 텍스트
 
   @override
   void initState() {
     super.initState();
     _initialization = _tempSetIds();
+  }
+
+  void updateScheduleText(String newText) {
+    setState(() {
+      scheduleText = newText; // 새로운 텍스트로 업데이트
+    });
   }
 
   Future<void> _tempSetIds() async {

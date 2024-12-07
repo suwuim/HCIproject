@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:travelmate/userProvider.dart';
 import 'package:travelmate/infoProvider.dart';
 import 'package:travelmate/sessionProvider.dart';
+import 'package:travelmate/messageProvider.dart';
+import 'dart:math';
 
 class ChatScreen extends StatefulWidget {
   String chatTitle;
@@ -28,6 +30,23 @@ class _ChatScreenState extends State<ChatScreen> {
   int? _infoId;
   int? _sessionId;
 
+  String firstSystemMessage = "안녕하세요! 👋\n"
+      "맞춤형 여행 서비스 **TravelMate**입니다 ✨\n\n"
+      "알려주신 기본 정보를 바탕으로, 여행 준비부터 일정 계획까지 맞춤형 여행 서비스를 제공할게요! 🧳✈️\n"
+      "\n"
+      "1️⃣ 추천: ~~ 추천해줘 (나라, 장소, 음식 등)\n"
+      "2️⃣ 일정: ~~ 일정 짜줘\n"
+      "3️⃣ 준비물: ~~ 준비물 알려줘\n"
+      "\n원하시는 내용을 말해주세요! 😊💬";
+
+  List<List<String>> questionGroups = [
+    ["어두운 골목의 숙소는 피하고 싶어요", "유명한 호수를 구경하고 싶어요", "미슐랭 레스토랑에 가고 싶어요", "짜릿한 액티비티를 하고 싶어요", "전통 체험 프로그램에 참여하고 싶어요", "현지 축제나 문화 행사를 경험하고 싶어요", "현지 거리의 분위기를 느껴보고 싶어요"],
+    ["현지 문화를 깊이 체험하고 싶어요", "편안한 휴양지를 방문하고 싶어요", "야경이 멋진 도시를 탐방하고 싶어요", "특별한 체험 활동에 도전하고 싶어요", "현지 장터나 시장에서 쇼핑하며 문화를 느끼고 싶어요", "스노클링, 다이빙 같은 물놀이를 체험하고 싶어요", "현지의 다양한 음식 문화를 체험하고 싶어요"],
+    ["여행지에서 친구를 사귀고 싶어요", "가성비 좋은 숙소를 원해요", "역사 명소 둘러보고 싶어요", "산책이나 트레킹 같은 활동을 하고 싶어요", "박물관이나 미술관을 방문하고 싶어요", "조용한 자연 속 리조트에서 휴식을 취하고 싶어요", "현지 도시의 숨겨진 명소를 발견하고 싶어요"]
+  ];
+
+  List<List<String>> remainingQuestions = [];
+
   @override
   void initState(){
     super.initState();
@@ -36,6 +55,13 @@ class _ChatScreenState extends State<ChatScreen> {
     _sessionId = Provider.of<SessionProvider>(context, listen: false).sessionId;
     print("User ID: ${_userId}, Info ID: ${_infoId}, Session ID: ${_sessionId}");
     _loadMessages(_sessionId!);
+
+    remainingQuestions = questionGroups.map((list) => List<String>.from(list)).toList();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MessageProvider>(context, listen: false)
+          .addMessage(firstSystemMessage, 'answer');
+    });
   }
 
   Future<void> _loadMessages(int sessionId) async {
@@ -64,6 +90,21 @@ class _ChatScreenState extends State<ChatScreen> {
       print('Error loading mesages: $e');
     }
   }
+
+  String getRandomQuestion(int groupIndex) {
+    if (remainingQuestions[groupIndex].isEmpty) {
+      remainingQuestions[groupIndex] = List.from(questionGroups[groupIndex]);
+    }
+    final random = Random();
+    final question = remainingQuestions[groupIndex][random.nextInt(remainingQuestions[groupIndex].length)];
+    remainingQuestions[groupIndex].remove(question);
+    return question;
+  }
+  void _updateState(int groupIndex, String question) {
+    _textController.text = question;
+    setState(() {});  // 나머지 박스 갱신
+  }
+
 
   // 백엔드 주소 업데이트 (chat)
   Future<void> _handleSendMessage(String message) async {
@@ -140,6 +181,7 @@ class _ChatScreenState extends State<ChatScreen> {
         child: ChatDrawer(),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Stack(
@@ -294,26 +336,19 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 30),
-            child: Row(
-              children: [
-                RecommendQuestionBox(
-                    question: '숙소가 어두운 골목은 피하고 싶어요',
-                    onQuestionSelected: (question) {
-                      _textController.text = question; // 텍스트 설정
-                    }),
-                RecommendQuestionBox(
-                    question: '유명한 호수를 꼭 구경하고 싶어요',
-                    onQuestionSelected: (question) {
-                      _textController.text = question; // 텍스트 설정
-                    }),
-                RecommendQuestionBox(
-                    question: '미슐랭 레스토랑에 가고 싶어요',
-                    onQuestionSelected: (question) {
-                      _textController.text = question; // 텍스트 설정
-                    }),
-
-
-              ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,  // 가로 스크롤 활성화
+              child: Row(
+                children: List.generate(questionGroups.length, (index) {
+                  return RecommendQuestionBox(
+                    questions: questionGroups[index],
+                    randomQuestion: getRandomQuestion(index),
+                    onQuestionSelected: (selectedQuestion) {
+                      _updateState(index, selectedQuestion);
+                    },
+                  );
+                }),
+              ),
             ),
           ),
           ChatInputBar(
@@ -326,7 +361,34 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+class RecommendQuestionBox extends StatelessWidget {
+  final List<String> questions;
+  final String randomQuestion;
+  final Function(String) onQuestionSelected;
 
+  const RecommendQuestionBox({
+    Key? key,
+    required this.questions,
+    required this.randomQuestion,
+    required this.onQuestionSelected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => onQuestionSelected(randomQuestion),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        margin: EdgeInsets.only(right: 10, bottom: 10),
+        decoration: BoxDecoration(
+          color: Color(0xFFC9DDED),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Text(randomQuestion),
+      ),
+    );
+  }
+}
 class ChatInputBar extends StatelessWidget {
   final Function(String) onSend;
   final TextEditingController controller;
@@ -347,7 +409,7 @@ class ChatInputBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
-                hintText: '무엇이든 물어보세요',
+                hintText: '[추천] [일정 짜기] [준비물 확인] 등이 가능합니다. 무엇이든 물어보세요!',
                 border: InputBorder.none,
               ),
               onSubmitted: (value) {
@@ -369,42 +431,6 @@ class ChatInputBar extends StatelessWidget {
         ],
       ),
 
-    );
-  }
-}
-
-class RecommendQuestionBox extends StatelessWidget {
-  final String question;
-  final Function(String) onQuestionSelected;
-
-  const RecommendQuestionBox({
-    required this.question,
-    required this.onQuestionSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      focusColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      onTap: () {
-        onQuestionSelected(question);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        margin: EdgeInsets.only(right: 10, bottom: 10),
-        decoration: BoxDecoration(
-          color: Color(0xFFC9DDED),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Text(
-          question,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 13,
-          ),
-        ),
-      ),
     );
   }
 }
