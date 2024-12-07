@@ -42,7 +42,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
     final headers = {'Content-Type': 'application/json'};
 
     final body = json.encode({
-      'user_id': _userId ?? 6,
+      'user_id': _userId ?? 1,
       'age': _age,
       'gender': _gender,
       'transport': _transport,  //null OK
@@ -127,7 +127,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   void showMissingFieldsSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('필수 항목을 다 입력해주세요.'),
+        content: Text('필수 항목을 다 입력해주세요. $_decideSpan, $_spanDay, $_spanWeek, $_spanMonth, $_spanApprox'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -226,6 +226,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
 
           // 입력 정보 섹션
           Text("*필수항목", style: TextStyle(color: Colors.red),),
+          SizedBox(height: 10,),
           _buildAlignedInputRow(context, [
             _buildDropdownInput('나이', [
               '청소년', '20대 초반', '20대 후반', '30대 초반', '30대 후반', '40대', '50대', '60대 이상', '밝히고 싶지 않음'
@@ -393,10 +394,10 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
                     SizedBox(
                       width: 150,
                       child: _buildDropdownInput('Months', List.generate(7, (index) => index), (value) {
-                          setState(() {
-                            _spanMonth = value as int?;
-                          });
-                        },
+                        setState(() {
+                          _spanMonth = value as int?;
+                        });
+                      },
                       ),
                     ),
 
@@ -535,12 +536,3 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-
-

@@ -98,7 +98,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
         if (transport.isNotEmpty) {
           List<String> parts = transportLine.split(' ');
-          number = parts.length > 1 ? parts[1].trim() : null;
+          number = null;
         } else {
           transport = null;
         }
