@@ -88,11 +88,11 @@ class _TravelPickSectionState extends State<TravelPickSection> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      TravelPickCard(img: 'assets/images/잘츠부르크.png', title: '오스트리아 잘츠부르크', hashtag: '#자연, #가족여행 #5박 6일', description: pickDesciption1),
-                      TravelPickCard(img: 'assets/images/바르셀로나.png', title: '스페인 바르셀로나', hashtag: '#힐링, #신혼여행 #4박 5일', description: pickDesciption2),
-                      TravelPickCard(img: 'assets/images/가오슝.png', title: '대만 가오슝', hashtag: '#액티비티, #우정여행 #1주일', description: pickDesciption3),
-                      TravelPickCard(img: 'assets/images/샌프란시스코.png', title: '미국 샌프란시스코', hashtag: '#힐링, #가족여행 #1달', description: pickDesciption4),
-                      TravelPickCard(img: 'assets/images/울란바토르.png', title: '몽골 울란바토르', hashtag: '#문화탐방, #가족여행 #5박 6일', description: pickDesciption5),
+                      TravelPickCard(pickId: 1, img: 'assets/images/잘츠부르크.png', title: '오스트리아 잘츠부르크', hashtag: '#자연, #가족여행 #5박 6일', description: pickDesciption1),
+                      TravelPickCard(pickId: 2, img: 'assets/images/바르셀로나.png', title: '스페인 바르셀로나', hashtag: '#힐링, #신혼여행 #4박 5일', description: pickDesciption2),
+                      TravelPickCard(pickId: 3, img: 'assets/images/가오슝.png', title: '대만 가오슝', hashtag: '#액티비티, #우정여행 #1주일', description: pickDesciption3),
+                      TravelPickCard(pickId: 4, img: 'assets/images/샌프란시스코.png', title: '미국 샌프란시스코', hashtag: '#힐링, #가족여행 #1달', description: pickDesciption4),
+                      TravelPickCard(pickId: 5, img: 'assets/images/울란바토르.png', title: '몽골 울란바토르', hashtag: '#문화탐방, #가족여행 #5박 6일', description: pickDesciption5),
                     ],
                   ),
                 ),
@@ -117,12 +117,14 @@ class TravelPickCard extends StatefulWidget {
   final String title;
   final String hashtag;
   final String description;
+  final int pickId;
 
   const TravelPickCard({
     required this.img,
     required this.title,
     required this.hashtag,
     required this.description,
+    required this.pickId,
   });
 
   @override
@@ -152,7 +154,7 @@ class _TravelPickCardState extends State<TravelPickCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PersonalPickPage(),
+            builder: (context) => PersonalPickPage(pickId: widget.pickId,),
           ),
         );
       },
@@ -229,4 +231,3 @@ const String pickDesciption2 = "이 서비스 덕분에 이번 여행은 완벽 
 const String pickDesciption3 = "추천해준 대로 계획을 따르니까 이동 동선이 딱딱 맞아서 너무 편했어요. 예쁘다고 했던 강변 산책로도 정말 좋았고, 현지 맛집까지 챙겨줘서 실패 없는 여행이었어요. 이런 맞춤형 일정이라면 다음에도 꼭 이용하고 싶어요!";
 const String pickDesciption4 = "혼자 여행이라 걱정이 많았는데, 이 앱이 추천해준 일정이 정말 잘 맞았어요. 특히 유명한 대교에 딱 맞춰 도착해서 황혼까지 보고 왔는데 너무 감동이었어요. 관광지도 알차게 돌았고 실시간 알림 덕에 놓칠 뻔한 명소도 갈 수 있었어요.";
 const String pickDesciption5 = "여행 초보인데도 앱 덕분에 완벽한 여행이 되었어요! 경치 좋기로 유명한 초원을 보러 갔는데, 진짜 숨이 멎을 정도로 아름다웠어요. 일정도 효율적이어서 피곤하지 않고 하루하루 알차게 즐길 수 있었어요. 다음에도 이 앱만 믿고 떠나려구요!";
-

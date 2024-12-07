@@ -76,7 +76,12 @@ class NavigationMenu extends StatelessWidget implements PreferredSizeWidget{
                   MaterialPageRoute(builder: (context) => ChatbotPage()),
                 );
               }),
-              Menu('여행랭킹', () {}),
+              Menu('여행랭킹', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage(scrollToPosition: 700.0),),
+                );
+              }),
               Menu('세계탐방', () {
                 Navigator.push(
                   context,

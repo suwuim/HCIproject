@@ -162,32 +162,48 @@ class Login extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DeletePage()),
-                        );
-                      },
-                      child: Text(
-                        '계정삭제',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.transparent), // 기본 배경 투명
-                        foregroundColor: WidgetStateProperty.all(Colors.grey), // 텍스트 색상 고정
-                        overlayColor: WidgetStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
-                        shadowColor: WidgetStateProperty.all(Colors.transparent),
-                        minimumSize: WidgetStateProperty.all(Size(70, 30)),
-                        shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 180, right: 160),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '저장을 원하시면 로그인하세요!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontFamily: 'Montserrat',
+                            ),
                           ),
-                        ),
-                        elevation: WidgetStateProperty.all(0),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => DeletePage()),
+                              );
+                            },
+                            child: Text(
+                              '계정삭제',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.transparent), // 기본 배경 투명
+                              foregroundColor: MaterialStateProperty.all(Colors.grey), // 텍스트 색상 고정
+                              overlayColor: MaterialStateProperty.all(Colors.transparent), // 호버 시 효과 완전 제거
+                              shadowColor: MaterialStateProperty.all(Colors.transparent),
+                              minimumSize: MaterialStateProperty.all(Size(70, 30)),
+                              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              ),
+                              elevation: MaterialStateProperty.all(0),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
