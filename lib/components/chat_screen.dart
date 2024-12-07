@@ -35,7 +35,19 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.chatTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),),
+      appBar: AppBar(
+        title: Text(
+          widget.chatTitle,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+        ),
+        backgroundColor: Colors.transparent, // AppBar 자체 배경을 투명하게 설정
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: Colors.white, // AppBar의 고정된 배경색
+          ),
+        ),
+        elevation: 0, // 그림
+      ),
       drawer: Drawer(
         child: ChatDrawer(),
       ),

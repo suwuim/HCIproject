@@ -74,6 +74,18 @@ flutter:
     - assets/images/map_image/유럽/풍경/
     - assets/images/map_image/유럽/건축물/
     - assets/images/map_image/유럽/액티비티/
+    - assets/images/map_image/남아메리카/
+    - assets/images/map_image/남아메리카/풍경/
+    - assets/images/map_image/남아메리카/건축물/
+    - assets/images/map_image/남아메리카/액티비티/
+    - assets/images/map_image/오세아니아/
+    - assets/images/map_image/오세아니아/풍경/
+    - assets/images/map_image/오세아니아/건축물/
+    - assets/images/map_image/오세아니아/액티비티/
+    - assets/images/map_image/아프리카/
+    - assets/images/map_image/아프리카/풍경/
+    - assets/images/map_image/아프리카/건축물/
+    - assets/images/map_image/아프리카/액티비티/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
