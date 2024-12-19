@@ -25,7 +25,14 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
   @override
   void initState() {
     super.initState();
-    _userId = Provider.of<UserProvider>(context, listen: false).userId;
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    _userId = userProvider.userId;
+
+    if (_userId == null) {
+      _userId = 1;
+      userProvider.setUserId(_userId);
+      print('바로 시작하기 -> userID: ${_userId}');
+    }
   }
 
 
@@ -42,7 +49,7 @@ class _SelectInputScreenState extends State<SelectInputScreen> {
     final headers = {'Content-Type': 'application/json'};
 
     final body = json.encode({
-      'user_id': _userId ?? 1,
+      'user_id': _userId,
       'age': _age,
       'gender': _gender,
       'transport': _transport,  //null OK
