@@ -11,8 +11,9 @@ import 'package:travelmate/sessionProvider.dart';
 import 'dart:math';
 import 'package:travelmate/page/login_page.dart';
 
+
 class ChatScreen extends StatefulWidget {
-  String chatTitle;
+  String chatTitle; ////
 
   ChatScreen({
     required this.chatTitle,
