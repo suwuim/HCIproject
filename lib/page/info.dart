@@ -9,8 +9,83 @@ class SelectInputScreen extends StatefulWidget {
 }
 
 class _SelectInputScreenState extends State<SelectInputScreen> {
+  bool isPlaceSelected = false;
+  bool isDateSelected = false;
+  bool isSpanSelected = false;
+  int? _infoId;
+  int? _userId;
+
+
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    _userId = userProvider.userId;
+
+    if (_userId == null) {
+      _userId = 1;
+      userProvider.setUserId(_userId);
+      print('바로 시작하기 -> userID: ${_userId}');
+    }
+  }
+
+
+  String? formatDateForMySQL(DateTime? date) {
+    if (date == null) {
+      return null;
+    }
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
+
+  Future<void> _sendDataToApi() async {
+    final url = Uri.parse('http://127.0.0.1:5000/info');
+    final headers = {'Content-Type': 'application/json'};
+
+    final body = json.encode({
+      'user_id': _userId,
+      'age': _age,
+      'gender': _gender,
+      'transport': _transport,  //null OK
+      'budget': _budget,
+      'purpose': _purpose,
+      'type': _type,
+      'num': _num,
+
+      'decide_place': _decidePlace,
+      'place': _place,  //null OK
+
+      'decide_date': _decideDate,
+      'date_start': formatDateForMySQL(_dateStart),  //null OK
+      'date_end': formatDateForMySQL(_dateEnd),  //null OK
+
+      'decide_span': _decideSpan,
+      'span_approx': _spanApprox,  //null OK
+      'span_month': _spanMonth,  //null OK
+      'span_week': _spanWeek,  //null OK
+      'span_day': _spanDay,  //null OK
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        setState(() {
+          _infoId = responseData['info_id'];
+        });
+
+        print('기본정보 보내기 성공 Info_ID: $_infoId');
+        Provider.of<InfoProvider>(context, listen: false).setInfoId(_infoId);
+      } else {
+        print('Failed to send data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
   // 예산 범위 슬라이더 값 설정
   double _budgetValue = 100; // 초기 예산 값
+
 
   // 입력 값 저장 변수
   String _destination = '';

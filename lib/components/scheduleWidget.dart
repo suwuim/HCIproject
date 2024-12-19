@@ -73,17 +73,10 @@ class _AnswerListState extends State<AnswerList> {
     Widget transportationInfo = Container();
     switch (widget.transport) {
       case '버스':
-        if (widget.number != null) {
-          transportationInfo = Row(
-            children: [
-              Text("${widget.number}", style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold)),
-              SizedBox(width: 5),
-              Image.asset('assets/images/버스.png'),
-            ],
-          );
-        } else {
-          transportationInfo = Image.asset(transportationImage);
-        }
+        transportationInfo = Padding(
+          padding: const EdgeInsets.only(left: 26),
+          child: Image.asset('assets/images/버스1.png', scale: 5,),
+        );
         break;
       case '택시':
         transportationInfo = Padding(
