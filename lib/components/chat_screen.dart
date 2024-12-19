@@ -22,56 +22,12 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
+
 class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> _messages = [];
-  final TextEditingController _textController = TextEditingController();
+  final List<String> _chatList = ['뉴욕: 2주', '바르셀로나: 기간 미정', '로스엔젤레스: 6박 7일'];
 
-  int? _userId;
-  int? _infoId;
-  int? _sessionId;
-
-
-
-  List<List<String>> questionGroups = [
-    ["어두운 골목의 숙소는 피하고 싶어요", "유명한 호수를 구경하고 싶어요", "미슐랭 레스토랑에 가고 싶어요", "짜릿한 액티비티를 하고 싶어요", "전통 체험 프로그램에 참여하고 싶어요", "현지 축제나 문화 행사를 경험하고 싶어요", "현지 거리의 분위기를 느껴보고 싶어요"],
-    ["현지 문화를 깊이 체험하고 싶어요", "편안한 휴양지를 방문하고 싶어요", "야경이 멋진 도시를 탐방하고 싶어요", "특별한 체험 활동에 도전하고 싶어요", "현지 장터나 시장에서 쇼핑하며 문화를 느끼고 싶어요", "스노클링, 다이빙 같은 물놀이를 체험하고 싶어요", "현지의 다양한 음식 문화를 체험하고 싶어요"],
-    ["여행지에서 친구를 사귀고 싶어요", "가성비 좋은 숙소를 원해요", "역사 명소 둘러보고 싶어요", "산책이나 트레킹 같은 활동을 하고 싶어요", "박물관이나 미술관을 방문하고 싶어요", "조용한 자연 속 리조트에서 휴식을 취하고 싶어요", "현지 도시의 숨겨진 명소를 발견하고 싶어요"]
-  ];
-
-  List<List<String>> remainingQuestions = [];
-
-  @override
-  void initState(){
-    super.initState();
-    _userId = Provider.of<UserProvider>(context, listen: false).userId;
-    _infoId = Provider.of<InfoProvider>(context, listen: false).infoId;
-    _sessionId = Provider.of<SessionProvider>(context, listen: false).sessionId;
-    print("User ID: ${_userId}, Info ID: ${_infoId}, Session ID: ${_sessionId}");
-    Provider.of<MessageProvider>(context, listen: false).loadMessages(_sessionId!);
-
-    remainingQuestions = questionGroups.map((list) => List<String>.from(list)).toList();
-  }
-
-  //랜덤 추천 박스
-  String getRandomQuestion(int groupIndex) {
-    if (remainingQuestions[groupIndex].isEmpty) {
-      remainingQuestions[groupIndex] = List.from(questionGroups[groupIndex]);
-    }
-    final random = Random();
-    final question = remainingQuestions[groupIndex][random.nextInt(remainingQuestions[groupIndex].length)];
-    remainingQuestions[groupIndex].remove(question);
-    return question;
-  }
-  void _updateState(int groupIndex, String question) {
-    _textController.text = question;
-    setState(() {});  // 나머지 박스 갱신
-  }
-
-
-
-  // 백엔드 주소 업데이트 (chat)
-  Future<void> _handleSendMessage(String message) async {
-    final url = Uri.parse('http://127.0.0.1:5000/llm/chat'); // Flask 서버 주소
+  void _handleSendMessage(String message) {
     if (message.isNotEmpty) {
       Provider.of<MessageProvider>(context, listen: false).addMessage(message, 'question');
       Provider.of<MessageProvider>(context, listen: false).addMessage('', 'loading');
@@ -88,27 +44,11 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
   }
-  Future<String> _sendMessageToBackend(String message, url, sessionID, infoID) async {
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'content': message,
-          'session_id':sessionID,
-          'info_id': infoID,
-        }),
-      );
-      print('test ${sessionID}');
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        return responseData['content'] ?? '응답을 생성할 수 없습니다.';
-      } else {
-        return '서버 오류: ${response.statusCode}';
-      }
-    } catch (e) {
-      return '네트워크 오류가 발생했습니다.';
-    }
+
+  void _handleTestMessage(String message) {
+    setState(() {
+      _messages.add({'message': '상대방의 메시지', 'sender': 'other'});
+    });
   }
 
   @override
@@ -172,7 +112,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Stack(
@@ -324,58 +263,26 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.only(left: 30),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,  // 가로 스크롤 활성화
-              child: Row(
-                children: List.generate(questionGroups.length, (index) {
-                  return RecommendQuestionBox(
-                    questions: questionGroups[index],
-                    randomQuestion: getRandomQuestion(index),
-                    onQuestionSelected: (selectedQuestion) {
-                      _updateState(index, selectedQuestion);
-                    },
-                  );
-                }),
-              ),
+            child: Row(
+              children: [
+                RecommendQuestionBox(question: '숙소가 어두운 골목은 피하고 싶어요'),
+                RecommendQuestionBox(question: '유명한 호수를 꼭 구경하고 싶어요'),
+                RecommendQuestionBox(question: '미슐랭 레스토랑에 가고 싶어요'),
+              ],
             ),
           ),
+
           ChatInputBar(
             onSend: _handleSendMessage,
-            controller: _textController,
           ),
-          SizedBox(height: 40),
+          ChatInputBar(
+            onSend: _handleTestMessage,
+          ),
+          SizedBox(height: 40,)
         ],
-      ),
-    );
-  }
-}
-
-class RecommendQuestionBox extends StatelessWidget {
-  final List<String> questions;
-  final String randomQuestion;
-  final Function(String) onQuestionSelected;
-
-  const RecommendQuestionBox({
-    Key? key,
-    required this.questions,
-    required this.randomQuestion,
-    required this.onQuestionSelected,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onQuestionSelected(randomQuestion),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        margin: EdgeInsets.only(right: 10, bottom: 10),
-        decoration: BoxDecoration(
-          color: Color(0xFFC9DDED),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Text(randomQuestion),
       ),
     );
   }
@@ -385,42 +292,34 @@ class RecommendQuestionBox extends StatelessWidget {
 
 class ChatInputBar extends StatelessWidget {
   final Function(String) onSend;
-  final TextEditingController controller;
 
-  const ChatInputBar({required this.controller, required this.onSend});
+  const ChatInputBar({Key? key, required this.onSend}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _controller = TextEditingController();
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30),
       padding: EdgeInsets.only(left: 20, right: 10),
       decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFFC9DDED), width: 2),
-          borderRadius: BorderRadius.circular(10)),
+        border: Border.all(color: Color(0xFFC9DDED), width: 2),
+        borderRadius: BorderRadius.circular(10)
+      ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: '[추천] [일정 짜기] [준비물 확인] 등이 가능합니다. 무엇이든 물어보세요!',
-                border: InputBorder.none,
-              ),
-              onSubmitted: (value) {
-                onSend(value);
-                controller.clear();
-              }, // 엔터 키를 눌렀을 때 동작
+              controller: _controller,
+              decoration: InputDecoration(hintText: '무엇이든 물어보세요', border: InputBorder.none),
             ),
           ),
           IconButton(
-            icon: Icon(
-              Icons.send,
-              color: AppColors.DarkBlue,
-            ),
+            icon: Icon(Icons.send, color: AppColors.DarkBlue,),
             onPressed: () {
-              onSend(controller.text);
-              controller.clear();
-            }, // send 버튼 클릭 시 동작
+              onSend(_controller.text);
+              _controller.clear();
+            },
           ),
         ],
       ),
